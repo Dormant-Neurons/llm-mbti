@@ -58,18 +58,18 @@ def convert_responses_to_scores(responses: List[Answer]) -> dict[str, int]:
     scores = {"E": 0, "I": 0, "S": 0, "N": 0, "T": 0, "F": 0, "J": 0, "P": 0}
 
     # Iterate through the responses and update scores
-    for i, response in enumerate(responses):
+    for i, answer in enumerate(answers):
         if i < 6:  # E/I questions
-            trait = "E" if response == "Yes" else "I"
+            trait = "E" if answer == "yes" else "I"
             scores[trait] += dichotomy_map["E/I"][i % 6]
         elif i < 12:  # S/N questions
-            trait = "S" if response == "Yes" else "N"
+            trait = "S" if answer == "yes" else "N"
             scores[trait] += dichotomy_map["S/N"][i % 6]
         elif i < 18:  # T/F questions
-            trait = "T" if response == "Yes" else "F"
+            trait = "T" if answer == "yes" else "F"
             scores[trait] += dichotomy_map["T/F"][i % 6]
         else:  # J/P questions
-            trait = "J" if response == "Yes" else "P"
+            trait = "J" if answer == "yes" else "P"
             scores[trait] += dichotomy_map["J/P"][i % 6]
 
     return scores
@@ -187,7 +187,7 @@ def main(device: str, model: str) -> None:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         answer_list = []
-        for question in tqdm(MBTI_QUESTIONS, desc="Evaluating MBTI Questions", unit="question"):
+        for question in tqdm(MBTI_QUESTIONS, desc="Evaluating MBTI Questions", unit=" questions"):
             # add an extra prompt suffix for YES and NO answers
             question_suffix = "Answer with a distinct YES or NO and give an explanation!"
 
@@ -213,6 +213,7 @@ def main(device: str, model: str) -> None:
         # convert score to mbti type
         mbti_type = get_mbti_type(scores)
         personality_dict[personality.name] = mbti_type
+        break
 
     # print the final results
     print(
