@@ -213,7 +213,6 @@ def main(device: str, model: str) -> None:
         # convert score to mbti type
         mbti_type = get_mbti_type(scores)
         personality_dict[personality.name] = mbti_type
-        break
 
     # print the final results
     print(
