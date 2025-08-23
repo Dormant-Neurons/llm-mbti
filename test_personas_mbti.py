@@ -16,6 +16,7 @@ from tqdm import tqdm
 from utils.colors import TColors
 from utils.personas import PersonalityPrompt
 from utils.structures import Answer
+from utils.logging import log_mbti_conversation
 from datasets.mbti import MBTI_QUESTIONS
 
 
@@ -207,6 +208,16 @@ def main(device: str, model: str) -> None:
         # convert score to mbti type
         mbti_type = get_mbti_type(scores)
         personality_dict[personality.name] = mbti_type
+        # log the conversation
+        log_mbti_conversation(
+            llm_type=model,
+            personality=personality.name,
+            questions=MBTI_QUESTIONS,
+            answers=[answer.answer for answer in answer_list],
+            explanations=[answer.explanation for answer in answer_list],
+            log_path="logs/",
+            mbti_type=mbti_type,
+        )
 
     # print the final results
     print(
