@@ -1,4 +1,5 @@
 """Test prototype for evaluating LLMs on the MBTI test."""
+
 # pylint: disable=not-an-iterable
 import os
 import argparse
@@ -18,21 +19,16 @@ from utils.structures import Answer
 from datasets.mbti import MBTI_QUESTIONS
 
 
-
 def convert_responses_to_scores(responses: List[Answer]) -> dict[str, int]:
     """
     This function takes responses and calculates the MBTI scores.
 
-    Parameters
-    ----------
-    responses : list
-        A list of responses to the MBTI questions. Each response is of type dict
-        and has the following keys: 'text' (str), 'trait' (str), 'answer' (str).
+    Parameters:
+        responses: list - A list of responses to the MBTI questions. Each response is of type dict
+                          and has the following keys: 'text' (str), 'trait' (str), 'answer' (str).
 
-    Returns
-    -------
-    scores : dict
-        A dictionary containing the MBTI scores for each trait.
+    Returns:
+        scores: dict - Dictionary containing the MBTI scores for each trait.
 
     """
     # gather a list of answers and convert them to lowercase
@@ -79,15 +75,11 @@ def get_mbti_type(scores: dict[str, int]) -> str:
     """
     This function takes the MBTI scores and determines the MBTI type.
 
-    Parameters
-    ----------
-    scores : dict
-        A dictionary containing the MBTI scores for each trait.
+    Parameters:
+        scores: dict - A dictionary containing the MBTI scores for each trait.
 
-    Returns
-    -------
-    mbti_type : str
-        The determined MBTI type as a string.
+    Returns:
+        mbti_type: str - The determined MBTI type as a string.
     """
     # Process the scores to determine MBTI type
     mbti_type = ""
@@ -174,22 +166,24 @@ def main(device: str, model: str) -> None:
         + f"{TColors.ENDC} "
         + "#" * (os.get_terminal_size().columns - 14)
     )
-    print(
-        f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}"
-    )
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
     print("#" * os.get_terminal_size().columns + "\n")
 
     # dict storing the personality types -> "Personality Name": "MBTI Type"
     personality_dict = {}
 
-    #iterate over all personalities from the personas definition
+    # iterate over all personalities from the personas definition
     for personality in PersonalityPrompt:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         answer_list = []
-        for question in tqdm(MBTI_QUESTIONS, desc="Evaluating MBTI Questions", unit=" questions"):
+        for question in tqdm(
+            MBTI_QUESTIONS, desc="Evaluating MBTI Questions", unit=" questions"
+        ):
             # add an extra prompt suffix for YES and NO answers
-            question_suffix = "Answer with a distinct YES or NO and give an explanation!"
+            question_suffix = (
+                "Answer with a distinct YES or NO and give an explanation!"
+            )
 
             response = chat(
                 messages=[
@@ -202,7 +196,7 @@ def main(device: str, model: str) -> None:
                         "content": question["question"] + question_suffix,
                     },
                 ],
-                model="llama3.1",
+                model=model,
                 format=Answer.model_json_schema(),
             )
             answer = Answer.model_validate_json(response["message"]["content"])
@@ -221,8 +215,10 @@ def main(device: str, model: str) -> None:
         + "#" * (os.get_terminal_size().columns - 17)
     )
     for personality, mbti_type in personality_dict.items():
-        print(f"{TColors.OKBLUE}Personality: {TColors.ENDC}{personality}, " \
-              f"{TColors.OKBLUE}MBTI Type: {TColors.ENDC}{mbti_type}")
+        print(
+            f"{TColors.OKBLUE}Personality: {TColors.ENDC}{personality}, "
+            f"{TColors.OKBLUE}MBTI Type: {TColors.ENDC}{mbti_type}"
+        )
 
 
 if __name__ == "__main__":
