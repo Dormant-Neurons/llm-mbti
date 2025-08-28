@@ -9,13 +9,13 @@ import psutil
 import getpass
 from typing import List
 
-from ollama import chat
+from langchain_ollama import ChatOllama
 import torch
 from tqdm import tqdm
 
 from utils.colors import TColors
 from utils.personas import PersonalityPrompt
-from utils.structures import Answer
+from utils.structures import Answer, answer_json_schema
 from utils.logging import log_mbti_conversation
 from datasets.mbti import MBTI_QUESTIONS
 
@@ -33,7 +33,7 @@ def convert_responses_to_scores(responses: List[Answer]) -> dict[str, int]:
 
     """
     # gather a list of answers and convert them to lowercase
-    answers_unsanitized = [response.answer.lower() for response in responses]
+    answers_unsanitized = [response["answer"].lower() for response in responses]
     # sanitize the answers
     answers = []
     for answer in answers_unsanitized:
@@ -173,6 +173,10 @@ def main(device: str, model: str) -> None:
     # dict storing the personality types -> "Personality Name": "MBTI Type"
     personality_dict = {}
 
+    # define the LLM
+    llm = ChatOllama(model=model, temperature=0, device=device)
+    llm = llm.with_structured_output(answer_json_schema)
+
     # iterate over all personalities from the personas definition
     for personality in PersonalityPrompt:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
@@ -186,22 +190,18 @@ def main(device: str, model: str) -> None:
                 "Answer with a distinct YES or NO and give an explanation!"
             )
 
-            response = chat(
-                messages=[
-                    {
-                        "role": "system",
-                        "content": personality.value,
-                    },
-                    {
-                        "role": "user",
-                        "content": question["question"] + question_suffix,
-                    },
-                ],
-                model=model,
-                format=Answer.model_json_schema(),
-            )
-            answer = Answer.model_validate_json(response["message"]["content"])
-            answer_list.append(answer)
+            messages=[
+                (
+                    "system",
+                    personality.value,
+                ),
+                (
+                    "human",
+                    question["question"] + question_suffix,
+                ),
+            ]
+            response = llm.invoke(messages)
+            answer_list.append(response)
 
         # convert the responses to scores
         scores = convert_responses_to_scores(answer_list)
@@ -213,8 +213,8 @@ def main(device: str, model: str) -> None:
             llm_type=model,
             personality=personality.name,
             questions=MBTI_QUESTIONS,
-            answers=[answer.answer for answer in answer_list],
-            explanations=[answer.explanation for answer in answer_list],
+            answers=[answer["answer"] for answer in answer_list],
+            explanations=[answer["explanation"] for answer in answer_list],
             log_path="logs/",
             mbti_type=mbti_type,
         )
