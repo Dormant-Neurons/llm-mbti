@@ -206,10 +206,11 @@ def main(device: str, model: str) -> None:
                     answer_list.append(response)
                     break
             else:
-                response = {
-                    "answer": "No",
-                    "explanation": "The model failed to provide a valid response."
-                }
+                response = Answer(
+                    answer="No",
+                    explanation="The model failed to provide a valid response."
+                )
+
                 answer_list.append(response)
 
         # convert the responses to scores
@@ -242,7 +243,7 @@ def main(device: str, model: str) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="MBTI Test")
+    parser = argparse.ArgumentParser(description="BigFive Test")
     parser.add_argument(
         "--device",
         "-dx",
