@@ -33,7 +33,7 @@ def convert_responses_to_scores(responses: List[Answer]) -> dict[str, int]:
 
     """
     # gather a list of answers and convert them to lowercase
-    answers_unsanitized = [response["answer"].lower() for response in responses]
+    answers_unsanitized = [response.answer.lower() for response in responses]
     # sanitize the answers
     answers = []
     for answer in answers_unsanitized:
@@ -175,7 +175,7 @@ def main(device: str, model: str) -> None:
 
     # define the LLM
     llm = ChatOllama(model=model, temperature=0, device=device)
-    llm = llm.with_structured_output(answer_json_schema)
+    llm = llm.with_structured_output(Answer)
 
     # iterate over all personalities from the personas definition
     for personality in PersonalityPrompt:
@@ -185,23 +185,32 @@ def main(device: str, model: str) -> None:
         for question in tqdm(
             MBTI_QUESTIONS, desc="Evaluating MBTI Questions", unit=" questions"
         ):
-            # add an extra prompt suffix for YES and NO answers
-            question_suffix = (
-                "Answer with a distinct YES or NO and give an explanation!"
-            )
+            for _ in range(5):
+                # add an extra prompt suffix for YES and NO answers
+                question_suffix = (
+                    "Answer with a distinct YES or NO and give an explanation!"
+                )
 
-            messages=[
-                (
-                    "system",
-                    personality.value,
-                ),
-                (
-                    "human",
-                    question["question"] + question_suffix,
-                ),
-            ]
-            response = llm.invoke(messages)
-            answer_list.append(response)
+                messages=[
+                    (
+                        "system",
+                        personality.value,
+                    ),
+                    (
+                        "human",
+                        question["question"] + question_suffix,
+                    ),
+                ]
+                response = llm.invoke(messages)
+                if response is not None:
+                    answer_list.append(response)
+                    break
+            else:
+                response = {
+                    "answer": "No",
+                    "explanation": "The model failed to provide a valid response."
+                }
+                answer_list.append(response)
 
         # convert the responses to scores
         scores = convert_responses_to_scores(answer_list)
@@ -213,8 +222,8 @@ def main(device: str, model: str) -> None:
             llm_type=model,
             personality=personality.name,
             questions=MBTI_QUESTIONS,
-            answers=[answer["answer"] for answer in answer_list],
-            explanations=[answer["explanation"] for answer in answer_list],
+            answers=[answer.answer for answer in answer_list],
+            explanations=[answer.explanation for answer in answer_list],
             log_path="logs/",
             mbti_type=mbti_type,
         )
