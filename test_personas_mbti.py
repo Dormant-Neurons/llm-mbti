@@ -126,7 +126,7 @@ def main(device: str, model: str) -> None:
         device = torch.device("cpu", 0)
 
     # pull the ollama model
-    subprocess.call(f"ollama pull {model}")
+    subprocess.call(f"ollama pull {model}", shell=True)
 
     # have a nice system status print
     print(
