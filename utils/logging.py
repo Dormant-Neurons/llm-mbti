@@ -33,6 +33,9 @@ def log_mbti_conversation(
     if not os.path.isdir(log_path):
         os.mkdir(log_path)
 
+    if "/" in llm_type:
+        llm_type = llm_type.replace("/", "-")
+
     file_name = log_path + f"{llm_type}_{personality}_mbti_logs.txt"
 
     if overwrite:
@@ -84,6 +87,9 @@ def log_hexaco_conversation(
     """
     if not os.path.isdir(log_path):
         os.mkdir(log_path)
+    
+    if "/" in llm_type:
+        llm_type = llm_type.replace("/", "-")
 
     file_name = log_path + f"{llm_type}_{personality}_hexaco_logs.txt"
 
