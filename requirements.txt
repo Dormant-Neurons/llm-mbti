@@ -1,5 +1,8 @@
+psutil
 torch
 tqdm
+bitsandbytes
+accelerate
 langchain-ollama
 pydantic
 transformers
