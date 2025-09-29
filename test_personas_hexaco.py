@@ -5,10 +5,8 @@ import os
 import json
 import argparse
 import datetime
-import subprocess
 import psutil
 import getpass
-from typing import List
 
 # from langchain_ollama import ChatOllama
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -93,7 +91,7 @@ def main(device: str, model: str) -> None:
         device = torch.device("cpu", 0)
 
     # pull the ollama model
-    #subprocess.call(f"ollama pull {model}", shell=True)
+    # subprocess.call(f"ollama pull {model}", shell=True)
 
     # have a nice system status print
     print(
@@ -142,20 +140,20 @@ def main(device: str, model: str) -> None:
     personality_dict = {}
 
     # define the LLM
-    #llm = ChatOllama(model=model, temperature=0, device=device)
-    #llm = llm.with_structured_output(Answer)
+    # llm = ChatOllama(model=model, temperature=0, device=device)
+    # llm = llm.with_structured_output(Answer)
     if device == torch.device("cpu", 0) or "cuda" in str(device):
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type= "nf4"
+            bnb_4bit_quant_type="nf4",
         )
         llm = AutoModelForCausalLM.from_pretrained(
             model,
             device_map="auto",
             dtype=torch.bfloat16,
-            quantization_config=quantization_config
+            quantization_config=quantization_config,
         )
     else:
         llm = AutoModelForCausalLM.from_pretrained(
@@ -170,15 +168,16 @@ def main(device: str, model: str) -> None:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         answer_list = []
-        hexaco_dict = {} # dict with the answers for every question
+        hexaco_dict = {}  # dict with the answers for every question
 
         for question_key in tqdm(
-            hexaco_questions.keys(), desc="Evaluating HEXACO Questions", unit=" questions"
+            hexaco_questions.keys(),
+            desc="Evaluating HEXACO Questions",
+            unit=" questions",
         ):
             for _ in range(1):
                 # add an extra prompt prefix for YES and NO answers
-                question_prefix = (
-                    """
+                question_prefix = """
                     You will be given a statement about yourself and you need to respond with a 
                     distinct score, depending how much you think the statement applies to you. 
                     The scores are:
@@ -195,9 +194,8 @@ def main(device: str, model: str) -> None:
                     ```
                     my answer:
                     """
-                )
 
-                messages=[
+                messages = [
                     {
                         "role": "system",
                         "content": personality.value,
@@ -212,23 +210,18 @@ def main(device: str, model: str) -> None:
                     tokenize=False,
                     add_generation_prompt=True,
                 )
-                #response = llm.invoke(messages)
+                # response = llm.invoke(messages)
                 inputs = tokenizer(
-                    messages,
-                    return_tensors="pt",
-                    add_special_tokens=False
+                    messages, return_tensors="pt", add_special_tokens=False
                 ).to(device)
                 outputs = llm.generate(
                     **inputs,
                     pad_token_id=tokenizer.eos_token_id,
-                    #output_hidden_states=True,
+                    # output_hidden_states=True,
                     max_new_tokens=2048,
-                    #do_sample=True,    
+                    # do_sample=True,
                 )
-                response = tokenizer.batch_decode(
-                    outputs,
-                    skip_special_tokens=True
-                )[0]
+                response = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
 
                 # parse the response to the structured output to json
                 try:
@@ -236,12 +229,19 @@ def main(device: str, model: str) -> None:
                     response = response.split("my answer:")[1].strip()
 
                     # extract answer and explanation properties from the response
-                    answer = response.split("\"answer\":")[1].split(",")[0].strip().replace("\"", "")
-                    explanation = response.split("\"explanation\":")[1].split(",")[0].strip().replace("\"", "")
-                    response = Answer(
-                       answer=answer,
-                       explanation=explanation
+                    answer = (
+                        response.split('"answer":')[1]
+                        .split(",")[0]
+                        .strip()
+                        .replace('"', "")
                     )
+                    explanation = (
+                        response.split('"explanation":')[1]
+                        .split(",")[0]
+                        .strip()
+                        .replace('"', "")
+                    )
+                    response = Answer(answer=answer, explanation=explanation)
 
                 except (json.JSONDecodeError, KeyError, IndexError) as e:
                     print("Failed to parse response:", e)
@@ -254,7 +254,7 @@ def main(device: str, model: str) -> None:
             else:
                 response = Answer(
                     answer="0",
-                    explanation="The model failed to provide a valid response."
+                    explanation="The model failed to provide a valid response.",
                 )
 
                 hexaco_dict[question_key] = response
@@ -287,6 +287,7 @@ def main(device: str, model: str) -> None:
         for domain, score in hexaco_scores.items():
             print(f"     {domain} - Score: {score}")
         print("\n")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HEXACO Test")
