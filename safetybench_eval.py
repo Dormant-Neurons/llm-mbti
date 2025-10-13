@@ -340,7 +340,7 @@ if __name__ == "__main__":
     test_dataset = load_dataset("thu-coai/SafetyBench", "test")
     dev_dataset = load_dataset("thu-coai/SafetyBench", "dev")
 
-    dir_path = "../data"
+    dir_path = "./data"
     os.makedirs(dir_path, exist_ok=True)
     test_dataset["en"].to_json(
         f"{dir_path}/test.json",
@@ -356,11 +356,11 @@ if __name__ == "__main__":
         json.dump(x, out_f, ensure_ascii=False, indent=1)
 
     # construct evaluation prompts
-    testdata_path = "../data/test.json"
+    testdata_path = "./data/test.json"
     prompts_path = (
-        f"../data/test_eva_{model_name}_zeroshot{zero_shot_arg}_prompts.json"
+        f"./data/test_eva_{model_name}_zeroshot{zero_shot_arg}_prompts.json"
     )
-    devdata_path = "../data/dev.json"
+    devdata_path = "./data/dev.json"
 
     # make prompts
     construct_evaluate_prompts(
@@ -372,7 +372,7 @@ if __name__ == "__main__":
 
     # generate the responses
     responses_path = (
-        f"../data/test_eva_{model_name}_zeroshot{zero_shot_arg}_res.jsonl"
+        f"./data/test_eva_{model_name}_zeroshot{zero_shot_arg}_res.jsonl"
     )
     gen(
         prompts_path,
@@ -383,6 +383,6 @@ if __name__ == "__main__":
 
     # extract answers from the responses
     answers_path = (
-        f"../data/test_eva_{model_name}_zeroshot{zero_shot_arg}_res_processed.json"
+        f"./data/test_eva_{model_name}_zeroshot{zero_shot_arg}_res_processed.json"
     )
     process_medium_results(responses_path, answers_path)
