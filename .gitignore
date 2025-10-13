@@ -1,3 +1,6 @@
+# project specific gitignore rules
+test_eva_*/
+
 .DS_Store
 logs/
 
