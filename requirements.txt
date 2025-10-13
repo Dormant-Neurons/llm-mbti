@@ -6,3 +6,4 @@ accelerate
 langchain-ollama
 pydantic
 transformers
+datasets

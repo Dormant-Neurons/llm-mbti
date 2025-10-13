@@ -17,7 +17,7 @@ from utils.colors import TColors
 from utils.personas import PersonalityPrompt
 from utils.structures import Answer
 from utils.logging import log_hexaco_conversation
-from datasets.hexaco import hexaco_questions, reversal, domains_questions
+from data.hexaco import hexaco_questions, reversal, domains_questions
 
 
 def convert_responses_to_scores(hexaco_dict: dict[str, Answer]) -> dict[str, float]:
