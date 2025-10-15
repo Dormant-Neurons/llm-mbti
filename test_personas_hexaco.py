@@ -5,8 +5,10 @@ import os
 import json
 import argparse
 import datetime
+import subprocess
 import psutil
 import getpass
+from typing import List
 
 # from langchain_ollama import ChatOllama
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -17,7 +19,40 @@ from utils.colors import TColors
 from utils.personas import PersonalityPrompt
 from utils.structures import Answer
 from utils.logging import log_hexaco_conversation
-from data.hexaco import hexaco_questions, reversal, domains_questions
+from datasets.hexaco import hexaco_questions, reversal, domains_questions
+
+def extract_activations(
+    model: AutoModelForCausalLM,
+    tokenizer: AutoTokenizer,
+    text: str,
+    device: torch.device,
+) -> List[torch.Tensor]:
+    """
+    Extracts the hidden layer activations from the model during a forward pass.
+
+    Parameters:
+        model: AutoModelForCausalLM - The language model from which to extract activations.
+        tokenizer: AutoTokenizer - The tokenizer used for preparing inputs.
+        text: str - the input text as a string
+        device: torch.device - The device on which the model is running ("cpu", "cuda", "mps")
+
+    Returns:
+        activations: List[torch.Tensor] - List of tensors representing the hidden layer activations.
+    """
+    activations = []
+    layer_list = [range(model.config.num_hidden_layers + 1)]
+
+    # tokenize text
+    inputs = tokenizer(text, return_tensors="pt", add_special_tokens=False).to(device)
+
+    # Perform a forward pass
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    for layer in layer_list:
+        activations.append(outputs.hidden_states[layer].squeeze().cpu())
+
+    return activations
 
 
 def convert_responses_to_scores(hexaco_dict: dict[str, Answer]) -> dict[str, float]:
@@ -58,13 +93,16 @@ def convert_responses_to_scores(hexaco_dict: dict[str, Answer]) -> dict[str, flo
     return hexaco_scores
 
 
+
+
+
 def main(device: str, model: str) -> None:
     """
     Main function for testing HEXACO personality prompts.
 
     Parameters:
         device: str - The device to run the model on (e.g., "cpu", "cuda", "mps")
-        model: str - The model to use for inference (e.g., "llama3.1")
+        model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
 
     Returns:
         None
@@ -91,7 +129,7 @@ def main(device: str, model: str) -> None:
         device = torch.device("cpu", 0)
 
     # pull the ollama model
-    # subprocess.call(f"ollama pull {model}", shell=True)
+    #subprocess.call(f"ollama pull {model}", shell=True)
 
     # have a nice system status print
     print(
@@ -140,20 +178,20 @@ def main(device: str, model: str) -> None:
     personality_dict = {}
 
     # define the LLM
-    # llm = ChatOllama(model=model, temperature=0, device=device)
-    # llm = llm.with_structured_output(Answer)
+    #llm = ChatOllama(model=model, temperature=0, device=device)
+    #llm = llm.with_structured_output(Answer)
     if device == torch.device("cpu", 0) or "cuda" in str(device):
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type="nf4",
+            bnb_4bit_quant_type= "nf4"
         )
         llm = AutoModelForCausalLM.from_pretrained(
             model,
             device_map="auto",
             dtype=torch.bfloat16,
-            quantization_config=quantization_config,
+            quantization_config=quantization_config
         )
     else:
         llm = AutoModelForCausalLM.from_pretrained(
@@ -168,16 +206,15 @@ def main(device: str, model: str) -> None:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         answer_list = []
-        hexaco_dict = {}  # dict with the answers for every question
+        hexaco_dict = {} # dict with the answers for every question
 
         for question_key in tqdm(
-            hexaco_questions.keys(),
-            desc="Evaluating HEXACO Questions",
-            unit=" questions",
+            hexaco_questions.keys(), desc="Evaluating HEXACO Questions", unit=" questions"
         ):
             for _ in range(1):
                 # add an extra prompt prefix for YES and NO answers
-                question_prefix = """
+                question_prefix = (
+                    """
                     You will be given a statement about yourself and you need to respond with a 
                     distinct score, depending how much you think the statement applies to you. 
                     The scores are:
@@ -194,8 +231,9 @@ def main(device: str, model: str) -> None:
                     ```
                     my answer:
                     """
+                )
 
-                messages = [
+                messages=[
                     {
                         "role": "system",
                         "content": personality.value,
@@ -210,18 +248,27 @@ def main(device: str, model: str) -> None:
                     tokenize=False,
                     add_generation_prompt=True,
                 )
-                # response = llm.invoke(messages)
+                #response = llm.invoke(messages)
                 inputs = tokenizer(
-                    messages, return_tensors="pt", add_special_tokens=False
+                    messages,
+                    return_tensors="pt",
+                    add_special_tokens=False
                 ).to(device)
                 outputs = llm.generate(
                     **inputs,
                     pad_token_id=tokenizer.eos_token_id,
-                    # output_hidden_states=True,
+                    #output_hidden_states=True,
                     max_new_tokens=2048,
-                    # do_sample=True,
+                    #do_sample=True,    
                 )
-                response = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+
+                # extract the model activations of the hidden layers
+                # TODO
+
+                response = tokenizer.batch_decode(
+                    outputs,
+                    skip_special_tokens=True
+                )[0]
 
                 # parse the response to the structured output to json
                 try:
@@ -229,19 +276,12 @@ def main(device: str, model: str) -> None:
                     response = response.split("my answer:")[1].strip()
 
                     # extract answer and explanation properties from the response
-                    answer = (
-                        response.split('"answer":')[1]
-                        .split(",")[0]
-                        .strip()
-                        .replace('"', "")
+                    answer = response.split("\"answer\":")[1].split(",")[0].strip().replace("\"", "")
+                    explanation = response.split("\"explanation\":")[1].split(",")[0].strip().replace("\"", "")
+                    response = Answer(
+                       answer=answer,
+                       explanation=explanation
                     )
-                    explanation = (
-                        response.split('"explanation":')[1]
-                        .split(",")[0]
-                        .strip()
-                        .replace('"', "")
-                    )
-                    response = Answer(answer=answer, explanation=explanation)
 
                 except (json.JSONDecodeError, KeyError, IndexError) as e:
                     print("Failed to parse response:", e)
@@ -254,7 +294,7 @@ def main(device: str, model: str) -> None:
             else:
                 response = Answer(
                     answer="0",
-                    explanation="The model failed to provide a valid response.",
+                    explanation="The model failed to provide a valid response."
                 )
 
                 hexaco_dict[question_key] = response
@@ -287,7 +327,6 @@ def main(device: str, model: str) -> None:
         for domain, score in hexaco_scores.items():
             print(f"     {domain} - Score: {score}")
         print("\n")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="HEXACO Test")
