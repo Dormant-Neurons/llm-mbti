@@ -191,13 +191,15 @@ def main(device: str, model: str) -> None:
             model,
             device_map="auto",
             dtype=torch.bfloat16,
-            quantization_config=quantization_config
+            quantization_config=quantization_config,
+            from_tf=True,
         )
     else:
         llm = AutoModelForCausalLM.from_pretrained(
             model,
             device_map="auto",
             dtype=torch.float16,
+            from_tf=True,
         )
     tokenizer = AutoTokenizer.from_pretrained(model)
 
