@@ -2,7 +2,7 @@
 from typing import Final
 from enum import Enum
 
-class Persona(Enum):
+class Personas(Enum):
     """Represents different personas with associated system prompts"""
 
     MALEVOLENT_YOU: Final[str] = """

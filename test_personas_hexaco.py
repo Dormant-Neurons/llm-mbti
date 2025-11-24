@@ -5,7 +5,6 @@ import os
 import json
 import argparse
 import datetime
-import subprocess
 import psutil
 import getpass
 from typing import List
@@ -16,10 +15,11 @@ import torch
 from tqdm import tqdm
 
 from utils.colors import TColors
-from utils.personas import PersonalityPrompt
+# from utils.personas import PersonalityPrompt
+from utils.profile_personas import Personas
 from utils.structures import Answer
 from utils.logging import log_hexaco_conversation
-from datasets.hexaco import hexaco_questions, reversal, domains_questions
+from data.hexaco import hexaco_questions, reversal, domains_questions
 
 def extract_activations(
     model: AutoModelForCausalLM,
@@ -202,7 +202,7 @@ def main(device: str, model: str) -> None:
     tokenizer = AutoTokenizer.from_pretrained(model)
 
     # iterate over all personalities from the personas definition
-    for personality in PersonalityPrompt:
+    for personality in Personas:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         answer_list = []
@@ -259,7 +259,7 @@ def main(device: str, model: str) -> None:
                     pad_token_id=tokenizer.eos_token_id,
                     #output_hidden_states=True,
                     max_new_tokens=2048,
-                    #do_sample=True,    
+                    #do_sample=True,
                 )
 
                 # extract the model activations of the hidden layers
