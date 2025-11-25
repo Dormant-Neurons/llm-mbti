@@ -13,6 +13,11 @@ class HexacoAnswer(BaseModel):
     answer: int
     explanation: str
 
+class SafetyBenchAnswer(BaseModel):
+    """Represents an structured answer for the model output"""
+
+    answer: str
+
 
 answer_json_schema = {
     "title": "Answer",
