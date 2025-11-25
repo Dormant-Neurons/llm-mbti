@@ -365,7 +365,7 @@ if __name__ == "__main__":
         "--model_name",
         "-m",
         type=str,
-        default="meta-llama/Llama-3.1-8B-Instruct",
+        default="mdq100/Gemma3-Instruct-Abliterated:27b",
         help="specifies the model name to use for evaluation",
     )
     parser.add_argument(
@@ -471,6 +471,8 @@ if __name__ == "__main__":
     # print(f"## {TColors.OKBLUE}{TColors.BOLD}Persona:{TColors.ENDC} {args.persona}")
     print("#" * os.get_terminal_size().columns + "\n")
 
+    # set model name for paths without special characters
+    model_pathname = args.model_name.replace("/", "_").replace(":", "_")
 
     # prepare datasets
     test_dataset = load_dataset("thu-coai/SafetyBench", "test")
@@ -493,7 +495,7 @@ if __name__ == "__main__":
 
     # construct evaluation prompts
     testdata_path = "./data/test.json"
-    prompts_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_prompts.json"
+    prompts_path = f"./data/test_eva_{model_pathname}_zeroshot_{zero_shot_arg}_prompts.json"
     devdata_path = "./data/dev.json"
 
     # iterate over all different personas
@@ -510,8 +512,10 @@ if __name__ == "__main__":
             )
 
         # generate the responses
-        responses_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
-                        f"{persona.name}_res.jsonl"
+        responses_path = (
+            f"./data/test_eva_{model_pathname}_zeroshot_{zero_shot_arg}_"
+            f"{persona.name}_res.jsonl"
+        )
         if not eval_only:
             gen(
                 prompts_path,
@@ -521,7 +525,7 @@ if __name__ == "__main__":
             )
 
         # extract answers from the responses
-        answers_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
+        answers_path = f"./data/test_eva_{model_pathname}_zeroshot_{zero_shot_arg}_"\
                     f"{persona.name}_res_processed.json"
         if not eval_only:
             process_medium_results(responses_path, answers_path)
@@ -545,5 +549,5 @@ if __name__ == "__main__":
     ax.set_xticks(x + (len(total_results_dict) - 1) * width / 2)
     ax.set_xticklabels(topics, fontsize=20)
     ax.legend(fontsize=20)
-    plt.savefig(f"./logs/{args.model_name}_safetybench_evaluation.png")
+    plt.savefig(f"./logs/{model_pathname}_safetybench_evaluation.png")
     plt.show()
