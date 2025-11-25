@@ -211,7 +211,7 @@ def main(device: str, model: str) -> None:
         hexaco_dict = {} # dict with the answers for every question
 
         for question_key in tqdm(
-            hexaco_questions.keys(), desc="Evaluating HEXACO Questions", unit=" questions"
+            hexaco_questions.keys(), desc="Evaluating HEXACO Questions", unit="question"
         ):
             for _ in range(5): # 5 attempts per question
                 # add an extra prompt prefix for YES and NO answers
