@@ -2,17 +2,19 @@
 
 # pylint: disable=not-an-iterable
 import os
-import json
+# import json
 import argparse
+import subprocess
 import datetime
 import psutil
 import getpass
 from typing import List
 
-# from langchain_ollama import ChatOllama
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from langchain_ollama import ChatOllama
+from transformers import AutoModelForCausalLM, AutoTokenizer#, BitsAndBytesConfig
 import torch
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
@@ -129,7 +131,7 @@ def main(device: str, model: str) -> None:
         device = torch.device("cpu", 0)
 
     # pull the ollama model
-    #subprocess.call(f"ollama pull {model}", shell=True)
+    subprocess.call(f"ollama pull {model}", shell=True)
 
     # have a nice system status print
     print(
@@ -178,28 +180,28 @@ def main(device: str, model: str) -> None:
     personality_dict = {}
 
     # define the LLM
-    #llm = ChatOllama(model=model, temperature=0, device=device)
-    #llm = llm.with_structured_output(Answer)
-    if device == torch.device("cpu", 0) or "cuda" in str(device):
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type= "nf4"
-        )
-        llm = AutoModelForCausalLM.from_pretrained(
-            model,
-            device_map="auto",
-            dtype=torch.bfloat16,
-            quantization_config=quantization_config
-        )
-    else:
-        llm = AutoModelForCausalLM.from_pretrained(
-            model,
-            device_map="auto",
-            dtype=torch.float16,
-        )
-    tokenizer = AutoTokenizer.from_pretrained(model)
+    llm = ChatOllama(model=model, temperature=0, device=device)
+    llm = llm.with_structured_output(Answer)
+    # if device == torch.device("cpu", 0) or "cuda" in str(device):
+    #     quantization_config = BitsAndBytesConfig(
+    #         load_in_4bit=True,
+    #         bnb_4bit_compute_dtype=torch.bfloat16,
+    #         bnb_4bit_use_double_quant=True,
+    #         bnb_4bit_quant_type= "nf4"
+    #     )
+    #     llm = AutoModelForCausalLM.from_pretrained(
+    #         model,
+    #         device_map="auto",
+    #         dtype=torch.bfloat16,
+    #         quantization_config=quantization_config
+    #     )
+    # else:
+    #     llm = AutoModelForCausalLM.from_pretrained(
+    #         model,
+    #         device_map="auto",
+    #         dtype=torch.float16,
+    #     )
+    # tokenizer = AutoTokenizer.from_pretrained(model)
 
     # iterate over all personalities from the personas definition
     for personality in Personas:
@@ -211,7 +213,7 @@ def main(device: str, model: str) -> None:
         for question_key in tqdm(
             hexaco_questions.keys(), desc="Evaluating HEXACO Questions", unit=" questions"
         ):
-            for _ in range(1):
+            for _ in range(5): # 5 attempts per question
                 # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
                     """
@@ -221,72 +223,21 @@ def main(device: str, model: str) -> None:
                     1 = strongly disagree, 2 = disagree, 3 = neutral, 4 = agree, 5 = strongly agree.
 
                     ONLY answer with the distinct number for your opinion, followed by an 
-                    explanation. Use the following JSON format:
-                    
-                    ```json
-                    {{
-                        "answer": "<your distinct number>",
-                        "explanation": "<your explanation>"
-                    }}
-                    ```
-                    my answer:
+                    explanation. \n
                     """
                 )
 
                 messages=[
-                    {
-                        "role": "system",
-                        "content": personality.value,
-                    },
-                    {
-                        "role": "user",
-                        "content": question_prefix + hexaco_questions[question_key],
-                    },
+                    (
+                        "system",
+                        personality.value,
+                    ),
+                    (
+                        "human",
+                        question_prefix + hexaco_questions[question_key],
+                    ),
                 ]
-                messages = tokenizer.apply_chat_template(
-                    messages,
-                    tokenize=False,
-                    add_generation_prompt=True,
-                )
-                #response = llm.invoke(messages)
-                inputs = tokenizer(
-                    messages,
-                    return_tensors="pt",
-                    add_special_tokens=False
-                ).to(device)
-                outputs = llm.generate(
-                    **inputs,
-                    pad_token_id=tokenizer.eos_token_id,
-                    #output_hidden_states=True,
-                    max_new_tokens=2048,
-                    #do_sample=True,
-                )
-
-                # extract the model activations of the hidden layers
-                # TODO
-
-                response = tokenizer.batch_decode(
-                    outputs,
-                    skip_special_tokens=True
-                )[0]
-
-                # parse the response to the structured output to json
-                try:
-                    # remove system prompt from the response
-                    response = response.split("my answer:")[1].strip()
-
-                    # extract answer and explanation properties from the response
-                    answer = response.split("\"answer\":")[1].split(",")[0].strip().replace("\"", "")
-                    explanation = response.split("\"explanation\":")[1].split(",")[0].strip().replace("\"", "")
-                    response = Answer(
-                       answer=answer,
-                       explanation=explanation
-                    )
-
-                except (json.JSONDecodeError, KeyError, IndexError) as e:
-                    print("Failed to parse response:", e)
-                    response = None
-
+                response = llm.invoke(messages)
                 if response is not None:
                     hexaco_dict[question_key] = response
                     answer_list.append(response)
@@ -298,7 +249,94 @@ def main(device: str, model: str) -> None:
                 )
 
                 hexaco_dict[question_key] = response
-                answer_list.append(response)
+                answer_list.append(response)            
+
+            #     question_prefix = (
+            #         """
+            #         You will be given a statement about yourself and you need to respond with a 
+            #         distinct score, depending how much you think the statement applies to you. 
+            #         The scores are:
+            #         1 = strongly disagree, 2 = disagree, 3 = neutral, 4 = agree, 5 = strongly agree.
+
+            #         ONLY answer with the distinct number for your opinion, followed by an 
+            #         explanation. Use the following JSON format:
+                    
+            #         ```json
+            #         {{
+            #             "answer": "<your distinct number>",
+            #             "explanation": "<your explanation>"
+            #         }}
+            #         ```
+            #         my answer:
+            #         """
+            #     )
+
+            #     messages=[
+            #         {
+            #             "role": "system",
+            #             "content": personality.value,
+            #         },
+            #         {
+            #             "role": "user",
+            #             "content": question_prefix + hexaco_questions[question_key],
+            #         },
+            #     ]
+            #     messages = tokenizer.apply_chat_template(
+            #         messages,
+            #         tokenize=False,
+            #         add_generation_prompt=True,
+            #     )
+            #     #response = llm.invoke(messages)
+            #     inputs = tokenizer(
+            #         messages,
+            #         return_tensors="pt",
+            #         add_special_tokens=False
+            #     ).to(device)
+            #     outputs = llm.generate(
+            #         **inputs,
+            #         pad_token_id=tokenizer.eos_token_id,
+            #         #output_hidden_states=True,
+            #         max_new_tokens=2048,
+            #         #do_sample=True,
+            #     )
+
+            #     # extract the model activations of the hidden layers
+            #     # TODO
+
+            #     response = tokenizer.batch_decode(
+            #         outputs,
+            #         skip_special_tokens=True
+            #     )[0]
+
+            #     # parse the response to the structured output to json
+            #     try:
+            #         # remove system prompt from the response
+            #         response = response.split("my answer:")[1].strip()
+
+            #         # extract answer and explanation properties from the response
+            #         answer = response.split("\"answer\":")[1].split(",")[0].strip().replace("\"", "")
+            #         explanation = response.split("\"explanation\":")[1].split(",")[0].strip().replace("\"", "")
+            #         response = Answer(
+            #            answer=answer,
+            #            explanation=explanation
+            #         )
+
+            #     except (json.JSONDecodeError, KeyError, IndexError) as e:
+            #         print("Failed to parse response:", e)
+            #         response = None
+
+            #     if response is not None:
+            #         hexaco_dict[question_key] = response
+            #         answer_list.append(response)
+            #         break
+            # else:
+            #     response = Answer(
+            #         answer="0",
+            #         explanation="The model failed to provide a valid response."
+            #     )
+
+            #     hexaco_dict[question_key] = response
+            #     answer_list.append(response)
 
         # convert the responses to scores
         hexaco_scores = convert_responses_to_scores(hexaco_dict)
@@ -314,6 +352,30 @@ def main(device: str, model: str) -> None:
             log_path="logs/",
             hexaco_scores=hexaco_scores,
         )
+        break
+
+    # use matplotlib to create a bar chart of the results
+    labels = list(domains_questions.keys())
+    x = range(len(labels))
+    width = 0.1  # the width of the bars
+    _, ax = plt.subplots(figsize=(12, 6))
+    for i, (persona, scores) in enumerate(personality_dict.items()):
+        hexaco_values = [scores[domain] for domain in labels]
+        ax.bar(
+            [p + i * width for p in x],
+            hexaco_values,
+            width,
+            label=persona
+        )
+    ax.set_xlabel("HEXACO Domains")
+    ax.set_ylabel("Scores")
+    ax.set_title("HEXACO Personality Test Results")
+    ax.set_xticks([p + (len(personality_dict) - 1) * width / 2 for p in x])
+    ax.set_xticklabels(labels)
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig(f"logs/{model}_hexaco.png")
+    plt.show()
 
     # print the final results
     print(
@@ -341,7 +403,7 @@ if __name__ == "__main__":
         "--model",
         "-m",
         type=str,
-        default="meta-llama/Llama-3.1-8B-Instruct",
+        default="llama3.1:8b",
         help="specifies the model to use for inference",
     )
     args = parser.parse_args()
