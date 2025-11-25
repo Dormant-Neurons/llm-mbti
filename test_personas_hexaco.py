@@ -360,7 +360,7 @@ def main(device: str, model: str) -> None:
     labels = list(domains_questions.keys())
     x = range(len(labels))
     width = 0.1  # the width of the bars
-    _, ax = plt.subplots(figsize=(12, 6))
+    _, ax = plt.subplots(figsize=(36, 18))
     for i, (persona, scores) in enumerate(personality_dict.items()):
         hexaco_values = [scores[domain] for domain in labels]
         ax.bar(
@@ -375,7 +375,7 @@ def main(device: str, model: str) -> None:
     ax.set_xticks([p + (len(personality_dict) - 1) * width / 2 for p in x])
     ax.set_xticklabels(labels)
     ax.legend()
-    plt.tight_layout()
+    #plt.tight_layout()
     plt.savefig(f"logs/{model}_hexaco.png")
     plt.show()
 
