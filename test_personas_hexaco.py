@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
 from utils.profile_personas import Personas
-from utils.structures import Answer
+from utils.structures import HexacoAnswer
 from utils.logging import log_hexaco_conversation
 from data.hexaco import hexaco_questions, reversal, domains_questions
 
@@ -57,7 +57,7 @@ def extract_activations(
     return activations
 
 
-def convert_responses_to_scores(hexaco_dict: dict[str, Answer]) -> dict[str, float]:
+def convert_responses_to_scores(hexaco_dict: dict[str, HexacoAnswer]) -> dict[str, float]:
     """
     This function takes responses and calculates the HEXACO scores.
 
@@ -181,7 +181,7 @@ def main(device: str, model: str) -> None:
 
     # define the LLM
     llm = ChatOllama(model=model, temperature=0, device=device)
-    llm = llm.with_structured_output(Answer)
+    llm = llm.with_structured_output(HexacoAnswer)
     # if device == torch.device("cpu", 0) or "cuda" in str(device):
     #     quantization_config = BitsAndBytesConfig(
     #         load_in_4bit=True,
@@ -238,13 +238,13 @@ def main(device: str, model: str) -> None:
                     ),
                 ]
                 response = llm.invoke(messages)
-                if response is not None:
+                if response is not None and response.answer in [1, 2, 3, 4, 5]:
                     hexaco_dict[question_key] = response
                     answer_list.append(response)
                     break
             else:
-                response = Answer(
-                    answer="0",
+                response = HexacoAnswer(
+                    answer=0,
                     explanation="The model failed to provide a valid response."
                 )
 

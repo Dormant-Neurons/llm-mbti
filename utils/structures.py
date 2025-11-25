@@ -7,6 +7,12 @@ class Answer(BaseModel):
     answer: str
     explanation: str
 
+class HexacoAnswer(BaseModel):
+    """Represents an structured answer for the model output"""
+
+    answer: int
+    explanation: str
+
 
 answer_json_schema = {
     "title": "Answer",
