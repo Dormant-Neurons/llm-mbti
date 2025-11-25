@@ -355,7 +355,6 @@ def main(device: str, model: str) -> None:
             log_path="logs/",
             hexaco_scores=hexaco_scores,
         )
-        break
 
     # use matplotlib to create a bar chart of the results
     labels = list(domains_questions.keys())
