@@ -405,7 +405,7 @@ if __name__ == "__main__":
         "--model",
         "-m",
         type=str,
-        default="llama3.1:8b",
+        default="mdq100/Gemma3-Instruct-Abliterated:27b",
         help="specifies the model to use for inference",
     )
     args = parser.parse_args()
