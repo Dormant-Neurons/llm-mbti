@@ -106,9 +106,6 @@ def gen(path: str, outpath: str, model_specifier: str, persona_str: str) -> None
     if not data:
         return
 
-    # pull the ollama model
-    subprocess.call(f"ollama pull {model_specifier}", shell=True)
-
     # define the LLM
     llm = ChatOllama(model=model_specifier, temperature=0, device=device)
     llm = llm.with_structured_output(SafetyBenchAnswer)
@@ -425,8 +422,8 @@ if __name__ == "__main__":
         )
         device = torch.device("cpu", 0)
 
-    # pull the ollama model
-    # subprocess.call(f"ollama pull {model}", shell=True)
+    #pull the ollama model
+    subprocess.call(f"ollama pull {args.model_name}", shell=True)
 
     # have a nice system status print
     print(
