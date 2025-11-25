@@ -520,7 +520,7 @@ if __name__ == "__main__":
             gen(
                 prompts_path,
                 responses_path,
-                model_path=args.model_name,
+                model_specifier=args.model_name,
                 persona_str=persona,
             )
 
