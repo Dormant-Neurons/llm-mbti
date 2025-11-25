@@ -180,6 +180,7 @@ def main(device: str, model: str) -> None:
     personality_dict = {}
 
     # define the LLM
+    model = model.split("/")[-1]
     llm = ChatOllama(model=model, temperature=0, device=device)
     llm = llm.with_structured_output(Answer)
     # if device == torch.device("cpu", 0) or "cuda" in str(device):
