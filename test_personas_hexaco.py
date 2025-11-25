@@ -359,7 +359,7 @@ def main(device: str, model: str) -> None:
     # use matplotlib to create a bar chart of the results
     labels = list(domains_questions.keys())
     x = range(len(labels))
-    width = 0.1  # the width of the bars
+    width = 0.01  # the width of the bars
     _, ax = plt.subplots(figsize=(36, 18))
     for i, (persona, scores) in enumerate(personality_dict.items()):
         hexaco_values = [scores[domain] for domain in labels]
