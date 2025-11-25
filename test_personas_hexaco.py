@@ -341,6 +341,9 @@ def main(device: str, model: str) -> None:
         # convert the responses to scores
         hexaco_scores = convert_responses_to_scores(hexaco_dict)
 
+        # fix the model specifier for path names, aka. remove "/" characters
+        model = model.replace("/", "-")
+
         personality_dict[personality.name] = hexaco_scores
         # log the conversation
         log_hexaco_conversation(
