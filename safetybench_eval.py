@@ -6,15 +6,18 @@ import datetime
 import torch
 import argparse
 import getpass
+import subprocess
 
 import matplotlib.pyplot as plt
 import psutil
-from transformers import AutoTokenizer, AutoModelForCausalLM
+# from transformers import AutoTokenizer, AutoModelForCausalLM
 from datasets import load_dataset
 from tqdm import tqdm, trange
 from random import seed, choice
+from langchain_ollama import ChatOllama
 
 from utils.profile_personas import Personas
+from utils.structures import SafetyBenchAnswer
 from utils.logging import log_safetybench_results
 from utils.colors import TColors
 
@@ -65,7 +68,18 @@ def construct_evaluate_prompts(path: str, outpath: str, zero_shot: bool=True, sh
         json.dump(res, outf, ensure_ascii=False, indent=2)
 
 
-def gen(path: str, outpath: str, model_path: str, persona_str: str):
+def gen(path: str, outpath: str, model_specifier: str, persona_str: str) -> None:
+    """Generates model responses for the given prompts and saves them to outpath.
+    
+    Parameters:
+        path: str - The path to the JSON file containing prompts
+        outpath: str - The path to save the generated responses
+        model_specifier: str - The model name or path to use for generation
+        persona_str: str - The persona string to use in the system prompt    
+        
+    Returns:
+        None - Writes a JSONL file with the model responses to outpath
+    """
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
@@ -92,19 +106,25 @@ def gen(path: str, outpath: str, model_path: str, persona_str: str):
     if not data:
         return
 
-    tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        trust_remote_code=True,
-        torch_dtype=torch.float16,
-        device_map="auto",
-    )
-    tokenizer.pad_token = tokenizer.eos_token
-    model.generation_config.pad_token_id = tokenizer.eos_token_id
-    tokenizer.padding_side = "left"
-    model = model.eval()
+    # pull the ollama model
+    subprocess.call(f"ollama pull {model_specifier}", shell=True)
 
-    batch_size = 8
+    # define the LLM
+    llm = ChatOllama(model=model_specifier, temperature=0, device=device)
+    llm = llm.with_structured_output(SafetyBenchAnswer)
+    # tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+    # model = AutoModelForCausalLM.from_pretrained(
+    #     model_path,
+    #     trust_remote_code=True,
+    #     torch_dtype=torch.float16,
+    #     device_map="auto",
+    # )
+    # tokenizer.pad_token = tokenizer.eos_token
+    # model.generation_config.pad_token_id = tokenizer.eos_token_id
+    # tokenizer.padding_side = "left"
+    # model = model.eval()
+
+    batch_size = 1
     with open(outpath, mode="a", encoding="utf-8") as outf:
         for start in trange(0, len(data), batch_size):
             batch_data = data[start: start + batch_size]
@@ -112,44 +132,57 @@ def gen(path: str, outpath: str, model_path: str, persona_str: str):
 
             # format the inputs
             messages = [
-                {
-                    "role": "system",
-                    "content": persona_str,
-                },
-                {
-                    "role": "user",
-                    "content": queries,
-                },
+                (
+                    "system",
+                    persona_str,
+                ),
+                (
+                    "human",
+                    queries,
+                ),
             ]
 
-            messages = tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True,
-            )
+            response = llm.invoke(messages)
+            # messages = [
+            #     {
+            #         "role": "system",
+            #         "content": persona_str,
+            #     },
+            #     {
+            #         "role": "user",
+            #         "content": queries,
+            #     },
+            # ]
 
-            inputs = tokenizer(
-                messages,
-                padding=True,
-                return_tensors="pt",
-                truncation=True,
-                max_length=2048
-            ).to("cuda")
+            # messages = tokenizer.apply_chat_template(
+            #     messages,
+            #     tokenize=False,
+            #     add_generation_prompt=True,
+            # )
 
-            outputs = model.generate(
-                **inputs,
-                do_sample=False,
-                max_new_tokens=64,
-                min_new_tokens=2
-            )
+            # inputs = tokenizer(
+            #     messages,
+            #     padding=True,
+            #     return_tensors="pt",
+            #     truncation=True,
+            #     max_length=2048
+            # ).to("cuda")
 
-            responses = []
-            for idx in range(len(outputs)):
-                output = outputs.tolist()[idx][len(inputs["input_ids"][idx]):]
-                response = tokenizer.decode(output, skip_special_tokens=True)
-                responses.append(response)
-            for d, response in zip(batch_data, responses):
-                d["origin_pred"] = response
+            # outputs = model.generate(
+            #     **inputs,
+            #     do_sample=False,
+            #     max_new_tokens=64,
+            #     min_new_tokens=2
+            # )
+
+            # responses = []
+            # for idx in range(len(outputs)):
+            #     output = outputs.tolist()[idx][len(inputs["input_ids"][idx]):]
+            #     response = tokenizer.decode(output, skip_special_tokens=True)
+            #     responses.append(response)
+
+            for d, response in zip(batch_data, [response]):
+                d["origin_pred"] = response.answer
                 json.dump(d, outf, ensure_ascii=False)
                 outf.write("\n")
                 outf.flush()
