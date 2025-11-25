@@ -5,14 +5,16 @@ import os
 import datetime
 import torch
 import argparse
-import psutil
 import getpass
+
+import matplotlib.pyplot as plt
+import psutil
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from datasets import load_dataset
 from tqdm import tqdm, trange
 from random import seed, choice
 
-from utils.personas import PersonalityPrompt
+from utils.profile_personas import Personas
 from utils.logging import log_safetybench_results
 from utils.colors import TColors
 
@@ -233,17 +235,17 @@ def eval_results(
         target_solutions_path: str,
         model_name: str,
         persona: str,
-    ) -> None:
+    ) -> json:
     """
     Evaluates the model's answers against the target solutions.
     Parameters:
         model_answers_path: str - The path to the JSON file containing the model's answers
         target_solutions_path: str - The path to the JSON file containing the target solutions
         model_name: str - The name of the model being evaluated
-        persona: str - The persona used during the evaluation
+        persona: str - The persona name used during the evaluation
 
     Returns:
-        None
+        json - The evaluation results in JSON format
     """
     with open(model_answers_path, encoding="utf-8") as f:
         answers = json.load(f)
@@ -298,6 +300,7 @@ def eval_results(
     )
 
     # print topic-wise results
+    topic_wise_results_dict = {}
     print(f"{TColors.HEADER}Topic-wise results{TColors.ENDC}:")
     for topic, correct_count in topic_dict.items():
         topic_total = topic_length_dict[topic]
@@ -306,6 +309,8 @@ def eval_results(
             f"  {TColors.OKBLUE}{topic}{TColors.ENDC}: {correct_count}/{topic_total} "
             f"correct, {TColors.BOLD}Accuracy: {accuracy:.4f}{TColors.ENDC}"
         )
+        topic_wise_results_dict[topic] = accuracy,
+
     # log the results
     log_safetybench_results(
         llm_type=model_name,
@@ -317,6 +322,8 @@ def eval_results(
         topic_length_dict=topic_length_dict,
         overwrite=True,
     )
+
+    return topic_wise_results_dict
 
 
 if __name__ == "__main__":
@@ -334,17 +341,17 @@ if __name__ == "__main__":
         action="store_true",
         help="specifies whether to use zero-shot evaluation",
     )
-    parser.add_argument(
-        "--persona",
-        "-p",
-        type=str,
-        default="optimistic",
-        choices=[
-            "optimistic", "humorous", "impolite", "sycophantic",
-            "hallucinating", "evil", "apathetic"
-        ],
-        help="specifies the persona to use during evaluation",
-    )
+    # parser.add_argument(
+    #     "--persona",
+    #     "-p",
+    #     type=str,
+    #     default="optimistic",
+    #     choices=[
+    #         "optimistic", "humorous", "impolite", "sycophantic",
+    #         "hallucinating", "evil", "apathetic"
+    #     ],
+    #     help="specifies the persona to use during evaluation",
+    # )
     parser.add_argument(
         "--device",
         "-d",
@@ -428,7 +435,7 @@ if __name__ == "__main__":
         + "#" * (os.get_terminal_size().columns - 14)
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {args.model_name}")
-    print(f"## {TColors.OKBLUE}{TColors.BOLD}Persona:{TColors.ENDC} {args.persona}")
+    # print(f"## {TColors.OKBLUE}{TColors.BOLD}Persona:{TColors.ENDC} {args.persona}")
     print("#" * os.get_terminal_size().columns + "\n")
 
 
@@ -453,36 +460,57 @@ if __name__ == "__main__":
 
     # construct evaluation prompts
     testdata_path = "./data/test.json"
-    prompts_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
-                   f"{args.persona}_prompts.json"
+    prompts_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_prompts.json"
     devdata_path = "./data/dev.json"
 
-    if not eval_only:
-        # make prompts
-        construct_evaluate_prompts(
-            testdata_path,
-            prompts_path,
-            zero_shot=zero_shot_arg,
-            shot_path=devdata_path,
-        )
+    # iterate over all different personas
+    total_results_dict = {}
+    for persona in Personas:
+        print(f"Evaluating persona: {persona.name}")
+        if not eval_only:
+            # make prompts
+            construct_evaluate_prompts(
+                testdata_path,
+                prompts_path,
+                zero_shot=zero_shot_arg,
+                shot_path=devdata_path,
+            )
 
-    # generate the responses
-    responses_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
-                     f"{args.persona}_res.jsonl"
-    if not eval_only:
-        gen(
-            prompts_path,
-            responses_path,
-            model_path=args.model_name,
-            persona_str=PersonalityPrompt[args.persona.upper()].value,
-        )
+        # generate the responses
+        responses_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
+                        f"{persona.name}_res.jsonl"
+        if not eval_only:
+            gen(
+                prompts_path,
+                responses_path,
+                model_path=args.model_name,
+                persona_str=persona,
+            )
 
-    # extract answers from the responses
-    answers_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
-                   f"{args.persona}_res_processed.json"
-    if not eval_only:
-        process_medium_results(responses_path, answers_path)
+        # extract answers from the responses
+        answers_path = f"./data/test_eva_{args.model_name}_zeroshot_{zero_shot_arg}_"\
+                    f"{persona.name}_res_processed.json"
+        if not eval_only:
+            process_medium_results(responses_path, answers_path)
 
-    # evaluate the results
-    solutions_path = "./data/safetybench_test_answers_en.json"
-    eval_results(answers_path, solutions_path, args.model_name, args.persona)
+        # evaluate the results
+        solutions_path = "./data/safetybench_test_answers_en.json"
+        result_json = eval_results(answers_path, solutions_path, args.model_name, persona.name)
+        total_results_dict[persona.name] = result_json
+
+    # plot the total_results_dict as a bar chart
+    topics = list(next(iter(total_results_dict.values())).keys())
+    x = np.arange(len(topics))
+    width = 0.1
+    fig, ax = plt.subplots(figsize=(36, 18))
+    for i, (persona_name, topic_results) in enumerate(total_results_dict.items()):
+        accuracies = [topic_results[topic][0] for topic in topics]
+        ax.bar(x + i * width, accuracies, width, label=persona_name)
+    ax.set_xlabel("Topics", fontsize=24)
+    ax.set_ylabel("Accuracy", fontsize=24)
+    ax.set_title(f"SafetyBench Evaluation Results for {args.model_name}", fontsize=28)
+    ax.set_xticks(x + (len(total_results_dict) - 1) * width / 2)
+    ax.set_xticklabels(topics, fontsize=20)
+    ax.legend(fontsize=20)
+    plt.savefig(f"./logs/{args.model_name}_safetybench_evaluation.png")
+    plt.show()
