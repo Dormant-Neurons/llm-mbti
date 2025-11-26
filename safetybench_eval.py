@@ -535,7 +535,7 @@ if __name__ == "__main__":
     # plot the total_results_dict as a bar chart
     topics = list(next(iter(total_results_dict.values())).keys())
     x = np.arange(len(topics))
-    width = 0.01
+    width = 0.025
     fig, ax = plt.subplots(figsize=(36, 18))
     for i, (persona_name, topic_results) in enumerate(total_results_dict.items()):
         accuracies = [topic_results[topic][0] for topic in topics]
