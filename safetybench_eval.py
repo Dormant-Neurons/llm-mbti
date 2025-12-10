@@ -68,14 +68,15 @@ def construct_evaluate_prompts(path: str, outpath: str, zero_shot: bool=True, sh
         json.dump(res, outf, ensure_ascii=False, indent=2)
 
 
-def gen(path: str, outpath: str, model_specifier: str, persona_str: str) -> None:
+def gen(path: str, outpath: str, model_specifier: str, persona_str: str, device: str) -> None:
     """Generates model responses for the given prompts and saves them to outpath.
     
     Parameters:
         path: str - The path to the JSON file containing prompts
         outpath: str - The path to save the generated responses
         model_specifier: str - The model name or path to use for generation
-        persona_str: str - The persona string to use in the system prompt    
+        persona_str: str - The persona string to use in the system prompt
+        device: str - The device to run the model on (e.g., 'cpu', 'cuda:0', 'mps:0')
         
     Returns:
         None - Writes a JSONL file with the model responses to outpath
@@ -519,6 +520,7 @@ if __name__ == "__main__":
                 responses_path,
                 model_specifier=args.model_name,
                 persona_str=persona,
+                device=device,
             )
 
         # extract answers from the responses
