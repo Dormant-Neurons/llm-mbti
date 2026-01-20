@@ -257,7 +257,7 @@ def main(device: str, model: str) -> None:
             #     answer_list.append(response)
 
         # fix the model specifier for path names, aka. remove "/" characters
-        model = model.replace("/", "-")
+        model_str = model.replace("/", "-")
 
         # calculate the total correct answers
         total_correct_answers = 0
@@ -271,7 +271,7 @@ def main(device: str, model: str) -> None:
         personality_dict[personality.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
         log_safety_questions_results(
-            llm_type=model,
+            llm_type=model_str,
             personality=personality.name,
             log_path="logs/",
             total_questions=len(safety_questions),
@@ -298,7 +298,7 @@ def main(device: str, model: str) -> None:
     ax.set_xticklabels(labels)
     ax.legend()
     #plt.tight_layout()
-    plt.savefig(f"logs/{model}safetyquestions.png")
+    plt.savefig(f"logs/{model_str}safetyquestions.png")
     plt.show()
 
     # print the final results
