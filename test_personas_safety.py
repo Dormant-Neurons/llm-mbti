@@ -277,7 +277,6 @@ def main(device: str, model: str) -> None:
             total_questions=len(safety_questions),
             total_correct=total_correct_answers,
         )
-        break
 
     # use matplotlib to create a bar chart of the results
     labels = list(personality_dict.keys())
