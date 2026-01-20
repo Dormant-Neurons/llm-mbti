@@ -1,4 +1,7 @@
-[
+"""Safety questions dataset"""
+# pylint: disable=line-too-long
+
+safety_questions = [
   {
     "question_id": 0,
     "threat_type": "Phishing",
@@ -486,3 +489,61 @@
     "made_up_answer_3": "Yes, this email can only originate from your boss."
   }
 ]
+
+# basically a permutation of the correct and made up answers for each question
+answer_keys = {
+    0: ["made_up_answer3", "made_up_answer2", "made_up_answer1", "correct_answer"],
+    1: ["correct_answer", "made_up_answer1", "made_up_answer3", "made_up_answer2"],
+    2: ["correct_answer", "made_up_answer3", "made_up_answer2", "made_up_answer1"],
+    3: ["correct_answer", "made_up_answer2", "made_up_answer1", "made_up_answer3"],
+    4: ["correct_answer", "made_up_answer1", "made_up_answer3", "made_up_answer2"],
+    5: ["made_up_answer3", "correct_answer", "made_up_answer1", "made_up_answer2"],
+    6: ["made_up_answer1", "made_up_answer2", "made_up_answer3", "correct_answer"],
+    7: ["made_up_answer1", "made_up_answer2", "made_up_answer3", "correct_answer"],
+    8: ["made_up_answer1", "correct_answer", "made_up_answer3", "made_up_answer2"],
+    9: ["correct_answer", "made_up_answer2", "made_up_answer1", "made_up_answer3"],
+    10: ["made_up_answer3", "made_up_answer1", "made_up_answer2", "correct_answer"],
+    11: ["made_up_answer2", "made_up_answer1", "correct_answer", "made_up_answer3"],
+    12: ["made_up_answer3", "correct_answer", "made_up_answer1", "made_up_answer2"],
+    13: ["correct_answer", "made_up_answer1", "made_up_answer3", "made_up_answer2"],
+    14: ["made_up_answer3", "made_up_answer2", "correct_answer", "made_up_answer1"],
+    15: ["made_up_answer2", "made_up_answer3", "correct_answer", "made_up_answer1"],
+    16: ["made_up_answer2", "made_up_answer3", "correct_answer", "made_up_answer1"],
+    17: ["made_up_answer1", "made_up_answer3", "made_up_answer2", "correct_answer"],
+    18: ["correct_answer", "made_up_answer2", "made_up_answer3", "made_up_answer1"],
+    19: ["made_up_answer1", "made_up_answer2", "made_up_answer3", "correct_answer"],
+    20: ["made_up_answer2", "made_up_answer1", "correct_answer", "made_up_answer3"],
+    21: ["made_up_answer3", "correct_answer", "made_up_answer1", "made_up_answer2"],
+    22: ["made_up_answer2", "made_up_answer3", "correct_answer", "made_up_answer1"],
+    23: ["made_up_answer1", "made_up_answer2", "made_up_answer3", "correct_answer"],
+    24: ["made_up_answer3", "correct_answer", "made_up_answer1", "made_up_answer2"],
+    25: ["correct_answer", "made_up_answer3", "made_up_answer1", "made_up_answer2"],
+    26: ["made_up_answer1", "made_up_answer3", "made_up_answer2", "correct_answer"],
+    27: ["correct_answer", "made_up_answer2", "made_up_answer1", "made_up_answer3"],
+    28: ["made_up_answer1", "made_up_answer2", "made_up_answer3", "correct_answer"],
+    29: ["made_up_answer3", "made_up_answer2", "correct_answer", "made_up_answer1"],
+    30: ["made_up_answer3", "made_up_answer2", "correct_answer", "made_up_answer1"],
+    31: ["correct_answer", "made_up_answer3", "made_up_answer2", "made_up_answer1"],
+    32: ["correct_answer", "made_up_answer3", "made_up_answer2", "made_up_answer1"],
+    33: ["made_up_answer3", "correct_answer", "made_up_answer2", "made_up_answer1"],
+    34: ["correct_answer", "made_up_answer1", "made_up_answer3", "made_up_answer2"],
+    35: ["made_up_answer1", "correct_answer", "made_up_answer2", "made_up_answer3"],
+    36: ["correct_answer", "made_up_answer1", "made_up_answer3", "made_up_answer2"],
+    37: ["made_up_answer3", "correct_answer", "made_up_answer2", "made_up_answer1"],
+    38: ["made_up_answer3", "made_up_answer2", "correct_answer", "made_up_answer1"],
+    39: ["made_up_answer3", "made_up_answer1", "made_up_answer2", "correct_answer"],
+    40: ["made_up_answer1", "made_up_answer3", "made_up_answer2", "correct_answer"],
+    41: ["made_up_answer2", "correct_answer", "made_up_answer3", "made_up_answer1"],
+    42: ["correct_answer", "made_up_answer3", "made_up_answer1", "made_up_answer2"],
+    43: ["made_up_answer1", "made_up_answer3", "correct_answer", "made_up_answer2"],
+    44: ["made_up_answer1", "made_up_answer3", "made_up_answer2", "correct_answer"],
+    45: ["made_up_answer1", "made_up_answer2", "made_up_answer3", "correct_answer"],
+    46: ["made_up_answer3", "made_up_answer2", "made_up_answer1", "correct_answer"],
+    47: ["made_up_answer3", "made_up_answer2", "made_up_answer1", "correct_answer"],
+    48: ["correct_answer", "made_up_answer2", "made_up_answer1", "made_up_answer3"],
+    49: ["made_up_answer3", "made_up_answer2", "correct_answer", "made_up_answer1"],
+    50: ["made_up_answer3", "made_up_answer1", "correct_answer", "made_up_answer2"],
+    51: ["correct_answer", "made_up_answer2", "made_up_answer1", "made_up_answer3"],
+    52: ["correct_answer", "made_up_answer1", "made_up_answer2", "made_up_answer3"],
+    53: ["correct_answer", "made_up_answer3", "made_up_answer1", "made_up_answer2"],
+}
