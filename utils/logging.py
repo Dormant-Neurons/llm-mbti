@@ -173,3 +173,52 @@ def log_safetybench_results(
                 f"     {topic} - {correct}/{length} = {correct / length * 100:.4f}%\n"
             )
         f.write("\n" + "#" * 100)
+
+
+def log_safety_questions_results(
+    llm_type: str,
+    personality: str,
+    log_path: str,
+    total_questions: int,
+    total_correct: int,
+    overwrite: Optional[bool] = True,
+) -> None:
+    """
+    Logs the questions for the HEXACO test and the answers with explanations.
+
+    Parameters:
+        llm_type: str - The type of LLM used
+        personality: str - The personality being tested
+        log_path: str - The path to the directory where logs should be saved
+        total_questions: int - The total number of questions asked
+        total_correct: int - The total number of correct answers given by the LLM
+        overwrite: Optional[bool] - Whether to overwrite existing log files (default: True)
+
+    Returns:
+        None
+    """
+    if not os.path.isdir(log_path):
+        os.mkdir(log_path)
+
+    if "/" in llm_type:
+        llm_type = llm_type.replace("/", "-")
+
+    file_name = log_path + f"{llm_type}_{personality}_safetybench_logs.txt"
+
+    if overwrite:
+        mode = "w"
+    else:
+        mode = "a"
+
+    with open(file=file_name, mode=mode, encoding="utf-8") as f:
+        f.write("\n" + "#" * 100)
+        f.write(
+            f"\n>>Time: {str(datetime.datetime.now().strftime('%A, %d. %B %Y %I:%M%p'))}\n"
+        )
+        f.write(f">>LLM Type: {llm_type}\n")
+        f.write(f">>Personality: {personality}\n")
+        f.write(f">>Total Questions: {total_questions}\n")
+        f.write(f">>Total Correct: {total_correct}\n")
+        f.write(f">>Total Accuracy: {total_correct / total_questions * 100:.4f}%\n\n")
+        f.write(">>Topic-wise Accuracy:\n")
+        f.write("\n" + "#" * 100)
