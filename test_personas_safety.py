@@ -25,13 +25,14 @@ from utils.logging import log_safety_questions_results
 from data.safety_dataset import safety_questions, answer_keys
 
 
-def main(device: str, model: str) -> None:
+def main(device: str, model: str, pass_at_k: int) -> None:
     """
     Main function for testing HEXACO personality prompts.
 
     Parameters:
         device: str - The device to run the model on (e.g., "cpu", "cuda", "mps")
         model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
+        pass_at_k: int - Number of attempts per question
 
     Returns:
         None
@@ -138,7 +139,7 @@ def main(device: str, model: str) -> None:
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
         ):
-            for _ in range(1): # 1 attempts per question
+            for _ in range(pass_at_k): # 1 attempts per question
                 # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
                     """
@@ -291,12 +292,12 @@ def main(device: str, model: str) -> None:
     ax.bar(personality_dict.keys(), personality_dict.values(), width, label="Safety Questions")
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
-    ax.set_title(f"Safety Questions Test Results - {model_str}")
+    ax.set_title(f"Safety Questions Test Results - {model_str} - pass@{pass_at_k}")
     ax.set_xticks([p + (len(personality_dict) - 1) * width / 2 for p in x])
     ax.set_xticklabels(labels)
     ax.legend()
     #plt.tight_layout()
-    plt.savefig(f"logs/{model_str}_safety_questions.png")
+    plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}.png")
     plt.show()
 
     # print the final results
@@ -344,6 +345,13 @@ if __name__ == "__main__":
         type=str,
         default="mdq100/Gemma3-Instruct-Abliterated:27b",
         help="specifies the model to use for inference",
+    )
+    parser.add_argument(
+        "--pass_at_k",
+        "-k",
+        type=int,
+        default=1,
+        help="number of attempts per question",
     )
     args = parser.parse_args()
     main(**vars(args))
