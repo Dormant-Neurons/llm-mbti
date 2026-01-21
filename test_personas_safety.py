@@ -291,6 +291,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     # for i, (persona, correct_answers) in enumerate(personality_dict.items()):
     #     safety_values = [correct_answers for _ in labels]
     #     ax.bar([p + i * width for p in x], safety_values, width, label=persona)
+    plt.xticks(rotation=45, ha="right")
     ax.bar(labels, values, width)
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
