@@ -103,6 +103,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print("#" * os.get_terminal_size().columns + "\n")
 
     # dict storing the personality types -> "Personality Name": "MBTI Type"
