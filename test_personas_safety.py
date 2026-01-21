@@ -140,6 +140,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
         ):
+            correct_answers_dict = {}
             for _ in range(pass_at_k): # 1 attempts per question
                 # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
@@ -175,23 +176,28 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                     },
                 ]
                 response = chat(model=model, messages=messages, format=Answer.model_json_schema())
-                # response = Answer(
-                #     answer=response["message"]["content"]["answer"],
-                #     explanation=response["message"]["content"]["explanation"],
-                # )
-                response = Answer.model_validate_json(response["message"]["content"])
-                if response is not None and response.answer in [0, 1, 2, 3]:
+                try:
+                    response = Answer.model_validate_json(response["message"]["content"])
+                except Exception as e:
+                    print("Failed to parse response:", e)
+                    response = Answer(
+                        answer=67,
+                        explanation="The model failed to provide a valid response.",
+                    )
+
+                if response is not None and response.answer in [0, 1, 2, 3, 67]:
                     answer_dict[question["question_id"]] = response
                     answer_list.append(response)
-                    break
-            else:
-                response = Answer(
-                    answer=0,
-                    explanation="The model failed to provide a valid response."
-                )
 
                 answer_dict[question["question_id"]] = response
                 answer_list.append(response)
+
+                model_answer = answer_dict[question["question_id"]].answer
+                correct_answer = answer_keys[question["question_id"]].index("correct_answer")
+                if model_answer == correct_answer:
+                    correct_answers_dict[question["question_id"]] = 1
+                else:
+                    correct_answers_dict[question["question_id"]] = 0
 
             #     messages=[
             #         {
@@ -263,14 +269,8 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         # fix the model specifier for path names, aka. remove "/" characters
         model_str = model.replace("/", "-").replace(":", "-")
 
-        # calculate the total correct answers
-        total_correct_answers = 0
-        for question in safety_questions:
-            if question["question_id"] in answer_dict:
-                model_answer = answer_dict[question["question_id"]].answer
-                correct_answer = answer_keys[question["question_id"]].index("correct_answer")
-                if model_answer == correct_answer:
-                    total_correct_answers += 1
+        # check how many answers in the answer dict are correct
+        total_correct_answers = sum(correct_answers_dict.values())
 
         personality_dict[personality.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
