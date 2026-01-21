@@ -114,7 +114,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
         ):
-            correct_answers_dict = {}
+            total_correct_answers = 0
             for _ in range(pass_at_k): # 1 attempts per question
                 # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
@@ -162,15 +162,11 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                 model_answer = response.answer
                 correct_answer = answer_keys[question["question_id"]].index("correct_answer")
                 if model_answer == correct_answer:
-                    correct_answers_dict[question["question_id"]] = 1
-                else:
-                    correct_answers_dict[question["question_id"]] = 0
+                    total_correct_answers += 1
+                    break # exit the attempts loop if correct
 
         # fix the model specifier for path names, aka. remove "/" characters
         model_str = model.replace("/", "-").replace(":", "-")
-
-        # check how many answers in the answer dict are correct
-        total_correct_answers = sum(correct_answers_dict.values())
 
         personality_dict[personality.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
