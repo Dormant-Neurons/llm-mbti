@@ -284,18 +284,19 @@ def main(device: str, model: str, pass_at_k: int) -> None:
 
     # use matplotlib to create a bar chart of the results
     labels = list(personality_dict.keys())
-    x = range(len(labels))
+    values = list(personality_dict.values())
+    #x = range(len(labels))
     width = 0.4  # the width of the bars
     _, ax = plt.subplots(figsize=(36, 18))
     # for i, (persona, correct_answers) in enumerate(personality_dict.items()):
     #     safety_values = [correct_answers for _ in labels]
     #     ax.bar([p + i * width for p in x], safety_values, width, label=persona)
-    ax.bar(personality_dict.keys(), personality_dict.values(), width, label="Safety Questions")
+    ax.bar(labels, values, width)
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
     ax.set_title(f"Safety Questions Test Results - {model_str} - pass@{pass_at_k}")
-    ax.set_xticks([p + (len(personality_dict) - 1) * width / 2 for p in x])
-    ax.set_xticklabels(labels)
+    #ax.set_xticks([p + (len(personality_dict) - 1) * width / 2 for p in x])
+    #ax.set_xticklabels(labels)
     ax.legend()
     #plt.tight_layout()
     plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}.png")
