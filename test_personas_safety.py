@@ -257,7 +257,7 @@ def main(device: str, model: str) -> None:
             #     answer_list.append(response)
 
         # fix the model specifier for path names, aka. remove "/" characters
-        model_str = model.replace("/", "-")
+        model_str = model.replace("/", "-").replace(":", "-")
 
         # calculate the total correct answers
         total_correct_answers = 0
@@ -298,7 +298,7 @@ def main(device: str, model: str) -> None:
     ax.set_xticklabels(labels)
     ax.legend()
     #plt.tight_layout()
-    plt.savefig(f"logs/{model_str}safetyquestions.png")
+    plt.savefig(f"logs/{model_str}_safety_questions.png")
     plt.show()
 
     # print the final results
