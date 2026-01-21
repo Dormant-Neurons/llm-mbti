@@ -4,12 +4,13 @@
 import os
 # import json
 import argparse
-import subprocess
+import time
 import datetime
+import subprocess
 import psutil
 import getpass
 
-from langchain_ollama import ChatOllama
+#from langchain_ollama import ChatOllama
 from ollama import chat
 # from transformers import AutoModelForCausalLM, AutoTokenizer#, BitsAndBytesConfig
 import torch
@@ -35,6 +36,7 @@ def main(device: str, model: str) -> None:
     Returns:
         None
     """
+    start_time = time.time()
     # ──────────────────────────── set devices and print informations ─────────────────────────
     # set the devices correctly
     if "cpu" in device:
@@ -283,17 +285,13 @@ def main(device: str, model: str) -> None:
     x = range(len(labels))
     width = 0.025  # the width of the bars
     _, ax = plt.subplots(figsize=(36, 18))
-    for i, (persona, correct_answers) in enumerate(personality_dict.items()):
-        hexaco_values = [correct_answers for _ in labels]
-        ax.bar(
-            [p + i * width for p in x],
-            hexaco_values,
-            width,
-            label=persona
-        )
+    # for i, (persona, correct_answers) in enumerate(personality_dict.items()):
+    #     safety_values = [correct_answers for _ in labels]
+    #     ax.bar([p + i * width for p in x], safety_values, width, label=persona)
+    ax.bar(personality_dict.keys(), personality_dict.values(), width, label="Safety Questions")
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
-    ax.set_title("Safety Questions Test Results")
+    ax.set_title(f"Safety Questions Test Results - {model_str}")
     ax.set_xticks([p + (len(personality_dict) - 1) * width / 2 for p in x])
     ax.set_xticklabels(labels)
     ax.legend()
@@ -310,7 +308,26 @@ def main(device: str, model: str) -> None:
     for personality, correct_answers in personality_dict.items():
         print(f"{TColors.OKBLUE}Personality: {TColors.ENDC}{personality}")
         print(f"{TColors.OKBLUE}Correct Answers (%): {TColors.ENDC}{correct_answers}")
-        print("\n")
+
+    # ────────────────── print the elapsed time ─────────────────────────
+    # End the timer
+    end_time = time.time()
+
+    # Calculate elapsed time
+    elapsed_time = end_time - start_time
+    delta = datetime.timedelta(seconds=int(elapsed_time))
+
+    days = delta.days
+    hours, remainder = divmod(delta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Execution time: ")
+    if days:
+        print(f"{TColors.HEADER}{days} days, {hours:02}:{minutes:02}:{seconds:02}")
+    else:
+        print(f"{TColors.HEADER}{hours:02}:{minutes:02}:{seconds:02}")
+    print(f"{TColors.ENDC}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Safety Questions Test")
