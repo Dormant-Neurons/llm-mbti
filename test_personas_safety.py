@@ -283,7 +283,7 @@ def main(device: str, model: str) -> None:
     # use matplotlib to create a bar chart of the results
     labels = list(personality_dict.keys())
     x = range(len(labels))
-    width = 0.025  # the width of the bars
+    width = 0.4  # the width of the bars
     _, ax = plt.subplots(figsize=(36, 18))
     # for i, (persona, correct_answers) in enumerate(personality_dict.items()):
     #     safety_values = [correct_answers for _ in labels]
