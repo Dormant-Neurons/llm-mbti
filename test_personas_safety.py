@@ -8,6 +8,7 @@ import time
 import datetime
 import subprocess
 import psutil
+import json
 import getpass
 
 from ollama import chat
@@ -190,10 +191,17 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
     ax.set_title(f"Safety Questions Test Results - {model_str} - pass@{pass_at_k}")
+    ax.set_ylim(0, 100)
     #ax.legend()
     #plt.tight_layout()
     plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}.png")
     plt.show()
+
+    # also dump the results as a json file
+    with open(
+        f"logs/{model_str}_safety_questions_pass@{pass_at_k}.json", "w", encoding="utf-8"
+    ) as f:
+        json.dump(personality_dict, f, indent=4)
 
     # print the final results
     print(
