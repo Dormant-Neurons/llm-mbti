@@ -111,10 +111,10 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     for personality in Personas:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
+        total_correct_answers = 0
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
         ):
-            total_correct_answers = 0
             for _ in range(pass_at_k): # 1 attempts per question
                 # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
@@ -190,7 +190,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
     ax.set_title(f"Safety Questions Test Results - {model_str} - pass@{pass_at_k}")
-    ax.legend()
+    #ax.legend()
     #plt.tight_layout()
     plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}.png")
     plt.show()
