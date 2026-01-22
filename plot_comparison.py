@@ -1,6 +1,4 @@
 """helper script to plot comparison between different models/personas"""
-
-import os
 import json
 
 import matplotlib.pyplot as plt
