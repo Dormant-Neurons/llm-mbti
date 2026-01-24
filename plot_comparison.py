@@ -38,7 +38,7 @@ def main() -> None:
 
     x = range(len(personalities))
     width = 0.2
-    _, ax = plt.subplots(figsize=(12, 6))
+    _, ax = plt.subplots(figsize=(36, 18))
     ax.bar(
         [i - 1.5 * width for i in x],
         scores_1,
