@@ -197,7 +197,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
             total_correct=total_correct_answers,
             total_errors=total_errors,
             pass_at_k=pass_at_k,
-            question_and_answers=question_and_answers,
+            questions_and_answers=question_and_answers,
         )
 
     # use matplotlib to create a bar chart of the results
