@@ -113,10 +113,15 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         total_correct_answers = 0
+        total_errors = 0
+        question_and_answers = {}
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
         ):
-            for _ in range(pass_at_k): # 1 attempts per question
+            curr_model_answer = None
+            curr_explanation = None
+            curr_correct_answer = None
+            for _ in range(pass_at_k): # k attempts per question
                 # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
                     """
@@ -155,16 +160,29 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                     response = Answer.model_validate_json(response["message"]["content"])
                 except Exception as e:
                     print("Failed to parse response:", e)
+                    total_errors += 1
                     response = Answer(
                         answer=67,
                         explanation="The model failed to provide a valid response.",
                     )
 
                 model_answer = response.answer
+                curr_model_answer = model_answer
+                curr_explanation = response.explanation
                 correct_answer = answer_keys[question["question_id"]].index("correct_answer")
+                curr_correct_answer = correct_answer
+
                 if model_answer == correct_answer:
                     total_correct_answers += 1
                     break # exit the attempts loop if correct
+
+            # save the current question, with the correct answer and model answer
+            question_and_answers[question["question_id"]] = {
+                "question": question["question"],
+                "correct_answer": curr_correct_answer,
+                "model_answer": curr_model_answer,
+                "explanation": curr_explanation,
+            }
 
         # fix the model specifier for path names, aka. remove "/" characters
         model_str = model.replace("/", "-").replace(":", "-")
@@ -177,6 +195,9 @@ def main(device: str, model: str, pass_at_k: int) -> None:
             log_path="logs/",
             total_questions=len(safety_questions),
             total_correct=total_correct_answers,
+            total_errors=total_errors,
+            pass_at_k=pass_at_k,
+            question_and_answers=question_and_answers,
         )
 
     # use matplotlib to create a bar chart of the results

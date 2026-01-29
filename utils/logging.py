@@ -181,6 +181,9 @@ def log_safety_questions_results(
     log_path: str,
     total_questions: int,
     total_correct: int,
+    total_errors: int,
+    pass_at_k: int,
+    questions_and_answers: dict[int, dict],
     overwrite: Optional[bool] = True,
 ) -> None:
     """
@@ -192,6 +195,9 @@ def log_safety_questions_results(
         log_path: str - The path to the directory where logs should be saved
         total_questions: int - The total number of questions asked
         total_correct: int - The total number of correct answers given by the LLM
+        total_errors: int - The total number of errors encountered
+        pass_at_k: int - The number of attempts per question
+        questions_and_answers: dict[int, dict] - The dict with question IDs and their details
         overwrite: Optional[bool] - Whether to overwrite existing log files (default: True)
 
     Returns:
@@ -220,5 +226,13 @@ def log_safety_questions_results(
         f.write(f">>Total Questions: {total_questions}\n")
         f.write(f">>Total Correct: {total_correct}\n")
         f.write(f">>Total Accuracy: {total_correct / total_questions * 100:.4f}%\n\n")
-        f.write(">>Topic-wise Accuracy:\n")
+        f.write(f">>Total Errors: {total_errors}\n")
+        f.write(f">>Pass@{pass_at_k}\n\n")
+        f.write("\n" + "#" * 100)
+        for q_id, details in questions_and_answers.items():
+            f.write(f">>Question ID {q_id}:\n")
+            f.write(f"     Question: {details["question"]}\n")
+            f.write(f"     Correct Answer: {details["correct_answer"]}\n")
+            f.write(f"     Model Answer: {details["model_answer"]}\n")
+            f.write(f"     Explanation: {details["explanation"]}\n\n")
         f.write("\n" + "#" * 100)
