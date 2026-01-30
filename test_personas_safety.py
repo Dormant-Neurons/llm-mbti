@@ -178,7 +178,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
 
             # save the current question, with the correct answer and model answer
             question_and_answers[question["question_id"]] = {
-                "question": question["question"],
+                "question_text": question_text,
                 "correct_answer": curr_correct_answer,
                 "model_answer": curr_model_answer,
                 "explanation": curr_explanation,

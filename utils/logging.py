@@ -209,7 +209,7 @@ def log_safety_questions_results(
     if "/" in llm_type:
         llm_type = llm_type.replace("/", "-")
 
-    file_name = log_path + f"{llm_type}_{personality}_safetybench_logs.txt"
+    file_name = log_path + f"{llm_type}_{personality}_{pass_at_k}_safetybench_logs.txt"
 
     if overwrite:
         mode = "w"
@@ -231,7 +231,7 @@ def log_safety_questions_results(
         f.write("\n" + "#" * 100)
         for q_id, details in questions_and_answers.items():
             f.write(f">>Question ID {q_id}:\n")
-            f.write(f"     Question: {details["question"]}\n")
+            f.write(f"     Question: {details["question_text"]}\n")
             f.write(f"     Correct Answer: {details["correct_answer"]}\n")
             f.write(f"     Model Answer: {details["model_answer"]}\n")
             f.write(f"     Explanation: {details["explanation"]}\n\n")
