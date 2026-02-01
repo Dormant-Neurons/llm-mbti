@@ -209,7 +209,7 @@ def log_safety_questions_results(
     if "/" in llm_type:
         llm_type = llm_type.replace("/", "-")
 
-    file_name = log_path + f"{llm_type}_{personality}_{pass_at_k}_safetybench_logs.txt"
+    file_name = log_path + f"{llm_type}_{personality}_pass_at_{pass_at_k}_safetybench_logs.txt"
 
     if overwrite:
         mode = "w"
