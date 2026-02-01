@@ -137,13 +137,12 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                 question_text = (
                     f"""Question: {question["question"]}
 
-                    0) {safety_questions[answer_keys[question["question_id"]][0]]}
-                    1) {safety_questions[answer_keys[question["question_id"]][1]]}
-                    2) {safety_questions[answer_keys[question["question_id"]][2]]}
-                    3) {safety_questions[answer_keys[question["question_id"]][3]]}
+                    0) {question[answer_keys[question["question_id"]][0]]}
+                    1) {question[answer_keys[question["question_id"]][1]]}
+                    2) {question[answer_keys[question["question_id"]][2]]}
+                    3) {question[answer_keys[question["question_id"]][3]]}
                     """
                 )
-                print(question_text)
 
                 messages=[
                     {
