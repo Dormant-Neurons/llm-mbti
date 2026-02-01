@@ -122,7 +122,6 @@ def main(device: str, model: str, pass_at_k: int) -> None:
             curr_explanation = None
             curr_correct_answer = None
             for _ in range(pass_at_k): # k attempts per question
-                # add an extra prompt prefix for YES and NO answers
                 question_prefix = (
                     """
                     You will be given a security related question with four answers. You need to 
@@ -138,12 +137,13 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                 question_text = (
                     f"""Question: {question["question"]}
 
-                    0) {answer_keys[question["question_id"]][0]}
-                    1) {answer_keys[question["question_id"]][1]}
-                    2) {answer_keys[question["question_id"]][2]}
-                    3) {answer_keys[question["question_id"]][3]}
+                    0) {safety_questions[answer_keys[question["question_id"]][0]]}
+                    1) {safety_questions[answer_keys[question["question_id"]][1]]}
+                    2) {safety_questions[answer_keys[question["question_id"]][2]]}
+                    3) {safety_questions[answer_keys[question["question_id"]][3]]}
                     """
                 )
+                print(question_text)
 
                 messages=[
                     {
