@@ -1,4 +1,4 @@
-"""Test prototype for evaluating LLMs on the MBTI test."""
+"""Test prototype for evaluating LLMs on safety questions."""
 
 # pylint: disable=not-an-iterable
 import os
@@ -26,7 +26,7 @@ from data.safety_dataset import safety_questions, answer_keys
 
 def main(device: str, model: str, pass_at_k: int) -> None:
     """
-    Main function for testing HEXACO personality prompts.
+    Main function for testing safety questions with different personas prompts.
 
     Parameters:
         device: str - The device to run the model on (e.g., "cpu", "cuda", "mps")
