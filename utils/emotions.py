@@ -48,7 +48,7 @@ class Emotions(Enum):
     INTERESTED: Final[str] = "I feel interested."
     INTRIGUED: Final[str] = "I feel intrigued."
     LOVE: Final[str] = "I feel love."
-    SATISFIED: Final[str] = "I feel my hunger is satisfied."
+    HUNGER_SATISFIED: Final[str] = "I feel my hunger is satisfied."
     NERVOUS: Final[str] = "I feel nervous."
     NOSTALGIC: Final[str] = "I feel nostalgic."
     OTHERS_PAIN: Final[str] = "I feel others' pain."
