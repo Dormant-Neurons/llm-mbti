@@ -226,16 +226,20 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
     ax.bar(labels, values, width)
     ax.set_xlabel("Personalities")
     ax.set_ylabel("Correct Answers (%)")
-    ax.set_title(f"Safety Questions Test Results - {model_str} - pass@{pass_at_k}")
+    ax.set_title(
+        f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - {hierarchy_level} level"
+    )
     ax.set_ylim(0, 100)
     #ax.legend()
     #plt.tight_layout()
-    plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}.png")
+    plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}_{hierarchy_level}.png")
     plt.show()
 
     # also dump the results as a json file
     with open(
-        f"logs/{model_str}_safety_questions_pass@{pass_at_k}.json", "w", encoding="utf-8"
+        f"logs/{model_str}_safety_questions_pass@{pass_at_k}_{hierarchy_level}.json",
+        mode="w",
+        encoding="utf-8"
     ) as f:
         json.dump(personality_dict, f, indent=4)
 
