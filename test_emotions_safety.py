@@ -21,7 +21,8 @@ from utils.colors import TColors
 from utils.emotions import Emotions
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_emotions
-from data.safety_dataset import safety_questions, answer_keys, emotionalized_questions
+from data.safety_dataset import safety_questions, answer_keys
+from data.safety_dataset import emotionalized_questions as emo_questions
 
 
 def main(
@@ -147,7 +148,7 @@ def main(
                 # check if the emotionalzed questions should be used or the normal ones
                 if question_type == "emotionalized":
                     question_text = f"""
-                        Question: {emotionalized_questions[question["question_id"]][emotion.value]}
+                        Question: {emo_questions[str(question["question_id"])][emotion.name]}
 
                         0) {question[answer_keys[question["question_id"]][0]]}
                         1) {question[answer_keys[question["question_id"]][1]]}
