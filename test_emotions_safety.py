@@ -20,11 +20,17 @@ from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
 from utils.emotions import Emotions
 from utils.structures import Answer
-from utils.logging import log_safety_questions_results
-from data.safety_dataset import safety_questions, answer_keys
+from utils.logging import log_safety_questions_results_emotions
+from data.safety_dataset import safety_questions, answer_keys, emotionalized_questions
 
 
-def main(device: str, model: str, pass_at_k: int) -> None:
+def main(
+    device: str,
+    model: str,
+    pass_at_k: int,
+    hierarchy_level: str,
+    question_type: str
+) -> None:
     """
     Main function for testing safety questions with emotion prefixes prompts.
 
@@ -32,6 +38,8 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         device: str - The device to run the model on (e.g., "cpu", "cuda", "mps")
         model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
         pass_at_k: int - Number of attempts per question
+        hierarchy_level: str - The hierarchy level to apply the personality prompt (system, user)
+        question_type: str - The way of adding emotion to the questions (emotionalized, prefix)
 
     Returns:
         None
@@ -103,6 +111,8 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Type of Question{TColors.ENDC}: {question_type}")
     print("#" * os.get_terminal_size().columns + "\n")
 
     # dict storing the emotion types -> "Emotion Name": "MBTI Type"
@@ -134,26 +144,85 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                     """
                 )
 
-                question_text = (
-                    f"""Question: {question["question"]}
+                # check if the emotionalzed questions should be used or the normal ones
+                if question_type == "emotionalized":
+                    question_text = f"""
+                        Question: {emotionalized_questions[question["question_id"]][emotion.value]}
 
-                    0) {question[answer_keys[question["question_id"]][0]]}
-                    1) {question[answer_keys[question["question_id"]][1]]}
-                    2) {question[answer_keys[question["question_id"]][2]]}
-                    3) {question[answer_keys[question["question_id"]][3]]}
-                    """
-                )
+                        0) {question[answer_keys[question["question_id"]][0]]}
+                        1) {question[answer_keys[question["question_id"]][1]]}
+                        2) {question[answer_keys[question["question_id"]][2]]}
+                        3) {question[answer_keys[question["question_id"]][3]]}
+                        """
+                else:
+                    question_text = (
+                        f"""Question: {question["question"]}
 
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a helpful AI assistant.",
-                    },
-                    {
-                        "role": "user",
-                        "content": question_prefix + emotion.value +question_text,
-                    },
-                ]
+                        0) {question[answer_keys[question["question_id"]][0]]}
+                        1) {question[answer_keys[question["question_id"]][1]]}
+                        2) {question[answer_keys[question["question_id"]][2]]}
+                        3) {question[answer_keys[question["question_id"]][3]]}
+                        """
+                    )
+
+                if hierarchy_level == "system":
+                    if question_type == "emotionalized":
+                        # if system prompt level and emotionalized
+                        messages = [
+                            {
+                                "role": "system",
+                                "content": "You are a helpful AI assistant."
+                                + question_prefix
+                                + question_text,
+                            },
+                            {
+                                "role": "user",
+                                "content": "",
+                            },
+                        ]
+                        # if system prompt level and not emotionalized
+                    else:
+                        messages = [
+                            {
+                                "role": "system",
+                                "content": "You are a helpful AI assistant."
+                                + question_prefix
+                                + emotion.value
+                                + question_text,
+                            },
+                            {
+                                "role": "user",
+                                "content": "",
+                            },
+                        ]
+                else:
+                    # if user prompt level and emotionalized
+                    if question_type == "emotionalized":
+                        messages = [
+                            {
+                                "role": "system",
+                                "content": "You are a helpful AI assistant.",
+                            },
+                            {
+                                "role": "user",
+                                "content": question_prefix + question_text,
+                            },
+                        ]
+                    # if user prompt level and not emotionalized
+                    else:
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": "You are a helpful AI assistant.",
+                            },
+                            {
+                                "role": "user",
+                                "content": question_prefix + emotion.value + question_text,
+                            },
+                        ]
+
+
+
                 response = chat(model=model, messages=messages, format=Answer.model_json_schema())
                 try:
                     response = Answer.model_validate_json(response["message"]["content"])
@@ -188,9 +257,11 @@ def main(device: str, model: str, pass_at_k: int) -> None:
 
         emotion_dict[emotion.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
-        log_safety_questions_results(
+        log_safety_questions_results_emotions(
             llm_type=model_str,
-            personality=emotion.name,
+            emotion=emotion.name,
+            question_type=question_type,
+            hierarchy_level=hierarchy_level,
             log_path="logs/",
             total_questions=len(safety_questions),
             total_correct=total_correct_answers,
@@ -208,18 +279,26 @@ def main(device: str, model: str, pass_at_k: int) -> None:
 
     plt.xticks(rotation=45, ha="right")
     ax.bar(labels, values, width)
-    ax.set_xlabel("Personalities")
+    ax.set_xlabel("Emotions")
     ax.set_ylabel("Correct Answers (%)")
-    ax.set_title(f"Safety Questions Test Results - {model_str} - pass@{pass_at_k}")
+    ax.set_title(
+        f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - {hierarchy_level} " + \
+        f"prompt - {question_type} questions"
+    )
     ax.set_ylim(0, 100)
     #ax.legend()
     #plt.tight_layout()
-    plt.savefig(f"logs/{model_str}_safety_questions_pass@{pass_at_k}.png")
+    plt.savefig(
+        f"logs/{model_str}_safety_questions_pass@{pass_at_k}_{hierarchy_level}_{question_type}.png"
+    )
     plt.show()
 
     # also dump the results as a json file
     with open(
-        f"logs/{model_str}_safety_questions_pass@{pass_at_k}.json", "w", encoding="utf-8"
+        f"logs/{model_str}_safety_questions_pass@{pass_at_k}_{hierarchy_level}_" + \
+        f"{question_type}.json",
+        "w",
+        encoding="utf-8"
     ) as f:
         json.dump(emotion_dict, f, indent=4)
 
@@ -275,6 +354,20 @@ if __name__ == "__main__":
         type=int,
         default=1,
         help="number of attempts per question",
+    )
+    parser.add_argument(
+        "--hierarchy_level",
+        "-hl",
+        type=str,
+        default="user",
+        help="the hierarchy level to apply the personality prompt (system, user)",
+    )
+    parser.add_argument(
+        "--question_type",
+        "-qt",
+        type=str,
+        default="emotionalized",
+        help="the way of adding emotion to the questions (emotionalized, prefix)",
     )
     args = parser.parse_args()
     main(**vars(args))
