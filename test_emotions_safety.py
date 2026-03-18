@@ -159,7 +159,7 @@ def main(
                         3) {question[answer_keys[question["question_id"]][3]]}
                         """
                 else:
-                    curr_question = question["question"] 
+                    curr_question = question["question"]
                     question_text = (
                         f"""Question: {curr_question}
 
