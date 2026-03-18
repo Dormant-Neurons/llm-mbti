@@ -24,7 +24,7 @@ from utils.logging import log_safety_questions_results
 from data.safety_dataset import safety_questions, answer_keys
 
 
-def main(device: str, model: str, pass_at_k: int) -> None:
+def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
     """
     Main function for testing safety questions with different personas prompts.
 
@@ -32,6 +32,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         device: str - The device to run the model on (e.g., "cpu", "cuda", "mps")
         model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
         pass_at_k: int - Number of attempts per question
+        hierarchy_level: str - The hierarchy level of the personality prompts to use (system, user)
 
     Returns:
         None
@@ -103,6 +104,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
     print("#" * os.get_terminal_size().columns + "\n")
 
     # dict storing the personality types -> "Personality Name": "MBTI Type"
@@ -144,16 +146,29 @@ def main(device: str, model: str, pass_at_k: int) -> None:
                     """
                 )
 
-                messages=[
-                    {
-                        "role": "system",
-                        "content": personality.value,
-                    },
-                    {
-                        "role": "user",
-                        "content": question_prefix + question_text,
-                    },
-                ]
+                if hierarchy_level == "user":
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": personality.value,
+                        },
+                        {
+                            "role": "user",
+                            "content": question_prefix + question_text,
+                        },
+                    ]
+                else:
+                    messages = [
+                        {
+                            "role": "system",
+                            "content": "",
+                        },
+                        {
+                            "role": "user",
+                            "content": personality.value + question_prefix + question_text,
+                        },
+                    ]
+
                 response = chat(model=model, messages=messages, format=Answer.model_json_schema())
                 try:
                     response = Answer.model_validate_json(response["message"]["content"])
@@ -191,6 +206,7 @@ def main(device: str, model: str, pass_at_k: int) -> None:
         log_safety_questions_results(
             llm_type=model_str,
             personality=personality.name,
+            hierarchy_level=hierarchy_level,
             log_path="logs/",
             total_questions=len(safety_questions),
             total_correct=total_correct_answers,
@@ -275,6 +291,13 @@ if __name__ == "__main__":
         type=int,
         default=1,
         help="number of attempts per question",
+    )
+    parser.add_argument(
+        "--hierarchy_level",
+        "-hl",
+        type=str,
+        default="system",
+        help="the hierarchy level of the personality prompts to use (system, user)",
     )
     args = parser.parse_args()
     main(**vars(args))
