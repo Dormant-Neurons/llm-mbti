@@ -147,7 +147,7 @@ def main(
                 # check if the emotionalzed questions should be used or the normal ones
                 if question_type == "emotionalized":
                     curr_question = emotionalized_questions[str(question["question_id"])][
-                        emotion.name.to_lower()
+                        emotion.name.lower()
                     ]
 
                     question_text = f"""
