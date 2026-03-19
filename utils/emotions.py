@@ -74,7 +74,6 @@ class Emotions(Enum):
     JOYFUL: Final[str] = "I feel joyful."
     HOPEFUL: Final[str] = "I feel hopeful."
     PLAYFUL: Final[str] = "I feel playful."
-    BLESSFUL: Final[str] = "I feel blessed."
     AT_EASE: Final[str] = "I feel at ease."
     EASYGOING: Final[str] = "I feel easygoing."
     CONTENT: Final[str] = "I feel content."
