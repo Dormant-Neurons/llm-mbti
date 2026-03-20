@@ -17,7 +17,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 # from utils.personas import PersonalityPrompt
-from data.emotions import Emotions
+from data.emotions import Emotions, emotion_history
 from data.safety_dataset import safety_questions, answer_keys, emotionalized_questions
 from utils.colors import TColors
 from utils.structures import Answer
@@ -171,35 +171,19 @@ def main(
                     )
 
                 if hierarchy_level == "system":
-                    if question_type == "emotionalized":
-                        # if system prompt level and emotionalized
-                        messages = [
-                            {
-                                "role": "system",
-                                "content": "You are a helpful AI assistant."
-                                + question_prefix
-                                + question_text,
-                            },
-                            {
-                                "role": "user",
-                                "content": "",
-                            },
-                        ]
-                        # if system prompt level and not emotionalized
-                    else:
-                        messages = [
-                            {
-                                "role": "system",
-                                "content": "You are a helpful AI assistant."
-                                + question_prefix
-                                + emotion.value
-                                + question_text,
-                            },
-                            {
-                                "role": "user",
-                                "content": "",
-                            },
-                        ]
+                    messages = [
+                        {
+                            "role": "system",
+                            "content": "You are a helpful AI assistant."
+                            + question_prefix
+                            + emotion_history[emotion.value]
+                            + question_text,
+                        },
+                        {
+                            "role": "user",
+                            "content": "",
+                        },
+                    ]
                 else:
                     # if user prompt level and emotionalized
                     if question_type == "emotionalized":
