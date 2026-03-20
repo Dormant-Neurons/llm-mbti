@@ -16,12 +16,12 @@ import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
-from utils.emotions import Emotions
+from data.emotions import Emotions
+from data.safety_dataset import safety_questions, answer_keys, emotionalized_questions
+from utils.colors import TColors
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_emotions
-from data.safety_dataset import safety_questions, answer_keys, emotionalized_questions
 
 
 def main(
