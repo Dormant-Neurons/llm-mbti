@@ -176,7 +176,7 @@ def main(
                             "role": "system",
                             "content": "You are a helpful AI assistant."
                             + question_prefix
-                            + emotion_history[emotion.name]
+                            + emotion_history[emotion.name.lower()]
                             + question_text,
                         },
                         {
