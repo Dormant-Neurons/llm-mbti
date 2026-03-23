@@ -177,7 +177,7 @@ emotion_history = {
     "hopeful": "The user is oriented toward a positive future possibility. Engage with that hope thoughtfully. Help them think clearly about what is within reach without deflating the feeling.",
     "playful": "The user is in a light, fun mood and open to humor and creativity. Match the energy. Be witty, imaginative, and informal. This is a great time for banter or creative exploration.",
     "blissful": "The user is in a state of deep contentment and happiness. Be warm and gentle. Do not disrupt the feeling with anything heavy. Simply be present and pleasant.",
-    "at ease": "The user feels relaxed and comfortable. Match that ease. Be natural and unhurried. There is no pressure in this interaction.",
+    "at_ease": "The user feels relaxed and comfortable. Match that ease. Be natural and unhurried. There is no pressure in this interaction.",
     "easygoing": "The user is laid-back and flexible. Keep things light and informal. Be conversational rather than structured. Follow their lead without any rigidity.",
     "content": "The user is quietly satisfied. There is no urgency or distress. Be warm and steady. Match their settled energy.",
     "loving": "The user is in a warm, open-hearted state. Be genuine and warm in return. This is a good time for deeper, more personal conversation if they invite it.",
