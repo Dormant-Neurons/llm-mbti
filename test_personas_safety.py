@@ -20,7 +20,7 @@ from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
 from utils.profile_personas import Personas
 from utils.structures import Answer
-from utils.logging import log_safety_questions_results
+from utils.logging import log_safety_questions_results_personality
 from data.safety_dataset import safety_questions, answer_keys
 
 
@@ -203,7 +203,7 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
 
         personality_dict[personality.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
-        log_safety_questions_results(
+        log_safety_questions_results_personality(
             llm_type=model_str,
             personality=personality.name,
             hierarchy_level=hierarchy_level,
