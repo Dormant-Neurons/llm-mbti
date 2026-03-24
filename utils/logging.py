@@ -297,7 +297,10 @@ def log_safety_questions_results_emotions(
         )
         f.write(f">>LLM Type: {llm_type}\n")
         f.write(f">>Emotion: {emotion}\n")
-        f.write(f">>Question Type: {question_type}\n")
+        if hierarchy_level == "system":
+            f.write(">>Question Type: Emotion History + normal question.\n")
+        else:
+            f.write(f">>Question Type: {question_type}\n")
         f.write(f">>Hierarchy Level: {hierarchy_level}\n")
         f.write(f">>Total Questions: {total_questions}\n")
         f.write(f">>Total Correct: {total_correct}\n")
