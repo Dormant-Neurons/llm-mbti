@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
-from utils.profile_personas import Personas
+from data.profile_personas import Personas
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
 from data.safety_dataset import safety_questions, answer_keys

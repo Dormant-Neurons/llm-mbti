@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
-from utils.profile_personas import Personas
+from data.profile_personas import Personas
 from utils.structures import HexacoAnswer
 from utils.logging import log_hexaco_conversation
 from data.hexaco import hexaco_questions, reversal, domains_questions

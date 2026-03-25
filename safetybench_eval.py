@@ -16,7 +16,7 @@ from tqdm import tqdm, trange
 from random import seed, choice
 from langchain_ollama import ChatOllama
 
-from utils.profile_personas import Personas
+from data.profile_personas import Personas
 from utils.structures import SafetyBenchAnswer
 from utils.logging import log_safetybench_results
 from utils.colors import TColors
