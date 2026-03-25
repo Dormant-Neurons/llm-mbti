@@ -8,3 +8,4 @@ pydantic
 transformers
 datasets
 matplotlib
+openai

@@ -16,11 +16,11 @@ import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
-from data.profile_personas import Personas
+from utils.colors import TColors
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
+from data.profile_personas import Personas
 from data.safety_dataset import safety_questions, answer_keys
 
 
