@@ -13,11 +13,11 @@ from langchain_ollama import ChatOllama
 import torch
 from tqdm import tqdm
 
-from utils.colors import TColors
-from utils.personas import PersonalityPrompt
-from utils.structures import Answer, answer_json_schema
-from utils.logging import log_mbti_conversation
+from data.personas import PersonalityPrompt
 from data.mbti import MBTI_QUESTIONS
+from utils.colors import TColors
+from utils.structures import Answer
+from utils.logging import log_mbti_conversation
 
 
 def convert_responses_to_scores(responses: List[Answer]) -> dict[str, int]:
