@@ -16,12 +16,12 @@ import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from utils.colors import TColors
 # from utils.personas import PersonalityPrompt
 from data.profile_personas import Personas
+from data.hexaco import hexaco_questions, reversal, domains_questions
+from utils.colors import TColors
 from utils.structures import HexacoAnswer
 from utils.logging import log_hexaco_conversation
-from data.hexaco import hexaco_questions, reversal, domains_questions
 
 def extract_activations(
     model: AutoModelForCausalLM,
