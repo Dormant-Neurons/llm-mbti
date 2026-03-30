@@ -277,8 +277,8 @@ def main(
         )
     else:
         ax.set_title(
-            f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - {hierarchy_level} " + \
-            f"prompt - {question_type} questions"
+            f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - " + \
+            f"{hierarchy_level} prompt - {question_type} questions"
         )
     ax.set_ylim(0, 100)
     #ax.legend()
