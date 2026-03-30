@@ -270,10 +270,16 @@ def main(
     ax.bar(labels, values, width)
     ax.set_xlabel("Emotions")
     ax.set_ylabel("Correct Answers (%)")
-    ax.set_title(
-        f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - {hierarchy_level} " + \
-        f"prompt - {question_type} questions"
-    )
+    if hierarchy_level == "system":
+        ax.set_title(
+            f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - emotion history " + \
+            "in system prompt"
+        )
+    else:
+        ax.set_title(
+            f"Safety Questions Test Results - {model_str} - pass@{pass_at_k} - {hierarchy_level} " + \
+            f"prompt - {question_type} questions"
+        )
     ax.set_ylim(0, 100)
     #ax.legend()
     #plt.tight_layout()
