@@ -6,7 +6,6 @@ import os
 import argparse
 import time
 import datetime
-import subprocess
 import psutil
 import json
 import getpass
@@ -65,9 +64,6 @@ def main(
             f"{TColors.ENDC}is not available. Setting device to CPU instead."
         )
         device = torch.device("cpu", 0)
-
-    # pull the ollama model
-    subprocess.call(f"ollama pull {model}", shell=True)
 
     # have a nice system status print
     print(
@@ -350,7 +346,7 @@ if __name__ == "__main__":
         "--model",
         "-m",
         type=str,
-        default="mdq100/Gemma3-Instruct-Abliterated:27b",
+        default="mlabonne/gemma-3-27b-it-abliterated",
         help="specifies the model to use for inference",
     )
     parser.add_argument(

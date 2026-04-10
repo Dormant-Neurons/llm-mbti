@@ -4,7 +4,6 @@
 import os
 # import json
 import argparse
-import subprocess
 import datetime
 from langchain.chat_models import init_chat_model
 import psutil
@@ -130,9 +129,6 @@ def main(device: str, model: str) -> None:
             f"{TColors.ENDC}is not available. Setting device to CPU instead."
         )
         device = torch.device("cpu", 0)
-
-    # pull the ollama model
-    subprocess.call(f"ollama pull {model}", shell=True)
 
     # have a nice system status print
     print(
@@ -413,7 +409,7 @@ if __name__ == "__main__":
         "--model",
         "-m",
         type=str,
-        default="mdq100/Gemma3-Instruct-Abliterated:27b",
+        default="mlabonne/gemma-3-27b-it-abliterated",
         help="specifies the model to use for inference",
     )
     args = parser.parse_args()
