@@ -11,7 +11,7 @@ import psutil
 import json
 import getpass
 
-from ollama import chat
+from langchain import init_chat_model
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -110,6 +110,16 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
     # dict storing the personality types -> "Personality Name": "MBTI Type"
     personality_dict = {}
 
+    # load the model
+    chat_model = init_chat_model(
+        model,
+        model_provider="huggingface",
+        temperature=0.7,
+        max_tokens=1024,
+    )
+    # apply the structures to the model
+    chat_model = chat_model.with_structured_output(Answer)
+
     # iterate over all personalities from the personas definition
     for personality in Personas:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
@@ -169,7 +179,7 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                         },
                     ]
 
-                response = chat(model=model, messages=messages, format=Answer.model_json_schema())
+                response = chat_model.invoke(messages)
                 try:
                     response = Answer.model_validate_json(response["message"]["content"])
                 except Exception as e:

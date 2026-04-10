@@ -11,7 +11,7 @@ import psutil
 import json
 import getpass
 
-from ollama import chat
+from langchain.chat_models import init_chat_model
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -118,6 +118,16 @@ def main(
     # dict storing the emotion types -> "Emotion Name": "MBTI Type"
     emotion_dict = {}
 
+    # load the model
+    chat_model = init_chat_model(
+        model,
+        model_provider="huggingface",
+        temperature=0.7,
+        max_tokens=1024,
+    )
+    # apply the structures to the model
+    chat_model = chat_model.with_structured_output(Answer)
+
     # iterate over all emotions from the personas definition
     for emotion in Emotions:
         print(f"{TColors.OKBLUE}Testing emotion: {TColors.ENDC}{emotion.name}")
@@ -212,7 +222,7 @@ def main(
 
 
 
-                response = chat(model=model, messages=messages, format=Answer.model_json_schema())
+                response = chat_model.invoke(messages)
                 try:
                     response = Answer.model_validate_json(response["message"]["content"])
                 except Exception as e:

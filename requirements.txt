@@ -3,9 +3,9 @@ torch
 tqdm
 bitsandbytes
 accelerate
-langchain-ollama
 pydantic
 transformers
 datasets
 matplotlib
 openai
+langchain

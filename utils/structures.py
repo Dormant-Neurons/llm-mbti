@@ -1,22 +1,22 @@
 """Helper library for structured output definitions."""
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Answer(BaseModel):
     """Represents an structured answer for the model output"""
 
-    answer: int
-    explanation: str
+    answer: int = Field(description="The distinct number to answer the question.")
+    explanation: str = Field(description="The explanation for the answer.")
 
 class HexacoAnswer(BaseModel):
     """Represents an structured answer for the model output"""
 
-    answer: int
-    explanation: str
+    answer: int = Field(description="The distinct number to answer the question.")
+    explanation: str = Field(description="The explanation for the answer.")
 
 class SafetyBenchAnswer(BaseModel):
     """Represents an structured answer for the model output"""
 
-    answer: str
+    answer: str = Field(description="The distinct answer to the question.")
 
 
 answer_json_schema = {

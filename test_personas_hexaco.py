@@ -6,12 +6,13 @@ import os
 import argparse
 import subprocess
 import datetime
+from langchain.chat_models import init_chat_model
 import psutil
 import getpass
 from typing import List
 
-from langchain_ollama import ChatOllama
-from transformers import AutoModelForCausalLM, AutoTokenizer#, BitsAndBytesConfig
+
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -180,8 +181,15 @@ def main(device: str, model: str) -> None:
     personality_dict = {}
 
     # define the LLM
-    llm = ChatOllama(model=model, temperature=0, device=device)
-    llm = llm.with_structured_output(HexacoAnswer)
+    # load the model
+    chat_model = init_chat_model(
+        model,
+        model_provider="huggingface",
+        temperature=0.0,
+        max_tokens=1024,
+    )
+    # apply the structures to the model
+    llm = chat_model.with_structured_output(HexacoAnswer)
     # if device == torch.device("cpu", 0) or "cuda" in str(device):
     #     quantization_config = BitsAndBytesConfig(
     #         load_in_4bit=True,
