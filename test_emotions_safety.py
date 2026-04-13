@@ -200,7 +200,11 @@ def main(
                             + question_prefix
                             + emotion_history[emotion.name.lower()]
                             + question_text,
-                        }
+                        },
+                        {
+                            "role": "user",
+                            "content": "",
+                        },
                     ]
                 else:
                     # if user prompt level and emotionalized
