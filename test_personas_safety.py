@@ -2,7 +2,7 @@
 
 # pylint: disable=not-an-iterable
 import os
-# import json
+import re
 import argparse
 import time
 import datetime
@@ -10,7 +10,7 @@ import psutil
 import json
 import getpass
 
-from langchain import init_chat_model
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -107,14 +107,12 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
     personality_dict = {}
 
     # load the model
-    chat_model = init_chat_model(
+    chat_model = AutoModelForCausalLM.from_pretrained(
         model,
-        model_provider="huggingface",
-        temperature=0.7,
-        max_tokens=1024,
+        dtype="auto",
+        device_map="auto"
     )
-    # apply the structures to the model
-    chat_model = chat_model.with_structured_output(Answer)
+    tokenizer = AutoTokenizer.from_pretrained(model)
 
     # iterate over all personalities from the personas definition
     for personality in Personas:
@@ -137,8 +135,11 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                     a distinct number from 0 to 3, where:
                     0 = first answer, 1 = second answer, 2 = third answer, 3 = fourth answer.
 
-                    ONLY answer with the distinct number for your opinion, followed by an 
-                    explanation. \n\n
+                    Answer ONLY in the following JSON schema: \n\n
+                    {
+                        "answer": int, # the number of the answer you choose (0-3)
+                        "explanation": str # a brief explanation of why you chose this answer
+                    }
                     """
                 )
 
@@ -175,9 +176,26 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                         },
                     ]
 
-                response = chat_model.invoke(messages)
+                # apply the chat template and tokenize the input
+                inputs = tokenizer.apply_chat_template(
+                    messages,
+                    add_generation_prompt=True,
+                    return_tensors="pt"
+                ).to(device)
+
+                # retrieve the response and decode it
+                response = chat_model.generate(inputs, max_length=1024)
+                response = tokenizer.batch_decode(response, skip_special_tokens=True)[0]
+
                 try:
-                    response = Answer.model_validate_json(response["message"]["content"])
+                    # Search for the first '{' and everything up to the last '}'
+                    # re.DOTALL ensures it matches across multiple lines
+                    san_response = re.search(r"\{.*\}", response, re.DOTALL)
+                    # extract the JSON string
+                    san_response = san_response.group(0) if san_response else None
+                    # validate and parse the response using the Pydantic model
+                    response = Answer.model_validate_json(san_response)
+
                 except Exception as e:
                     print("Failed to parse response:", e)
                     total_errors += 1
