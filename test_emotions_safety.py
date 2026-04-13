@@ -10,7 +10,7 @@ import psutil
 import json
 import getpass
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -114,13 +114,27 @@ def main(
     # dict storing the emotion types -> "Emotion Name": "MBTI Type"
     emotion_dict = {}
 
+    if "cuda" not in str(device):
+        config = None
+    else:
+        config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.float16,
+        )
+
     # load the model
     chat_model = AutoModelForCausalLM.from_pretrained(
         model,
         torch_dtype="auto",
-        device_map="auto"
+        low_cpu_mem_usage=True,
+        trust_remote_code=True,
+        device_map="auto",
+        cache_dir=os.environ["HF_HOME"],
+        quantization_config=config,
     )
-    tokenizer = AutoTokenizer.from_pretrained(model)
+    tokenizer = AutoTokenizer.from_pretrained(model, cache_dir=os.environ["HF_HOME"])
 
 
     # iterate over all emotions from the personas definition
