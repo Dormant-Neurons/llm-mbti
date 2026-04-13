@@ -117,7 +117,7 @@ def main(
     # load the model
     chat_model = AutoModelForCausalLM.from_pretrained(
         model,
-        dtype="auto",
+        torch_dtype="auto",
         device_map="auto"
     )
     tokenizer = AutoTokenizer.from_pretrained(model)
