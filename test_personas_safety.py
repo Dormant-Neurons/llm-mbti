@@ -207,6 +207,7 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                 try:
                     # Search for the first '{' and everything up to the last '}'
                     # re.DOTALL ensures it matches across multiple lines
+                    response = response.split("```json")[-1]
                     san_response = re.search(r"\{.*\}", response, re.DOTALL)
                     # extract the JSON string
                     san_response = san_response.group(0) if san_response else None
