@@ -18,6 +18,7 @@ class ActivationSteerer:
         "model.layers",  # Llama/Mistral
         "gpt_neox.layers",  # GPT‑NeoX
         "block",  # Flan‑T5
+        "language_model.layers", # Gemma3
     )
 
     def __init__(
