@@ -240,14 +240,17 @@ def main(
                     coef = 2.0
                     layer_idx = 20
                     steering_type = "response"
-                    if not os.path.exists(f"./persona_vectors/{model_str}/{steering}"):
+                    if not os.path.exists(
+                        f"/persona_vectors/persona_vectors/{model_str}/{steering}"
+                    ):
                         raise FileNotFoundError(
                             f"Steering vector not found at path: "
-                            f"./persona_vectors/{model_str}/{steering}/"
+                            f"/persona_vectors/persona_vectors/{model_str}/{steering}/"
                             f"{steering}_response_avg_diff.pt"
                         )
                     vector_path = Path(
-                        f"./persona_vectors/{model_str}/{steering}/{steering}_response_avg_diff.pt"
+                        f"./persona_vectors/persona_vectors/{model_str}/"
+                        + f"{steering}/{steering}_response_avg_diff.pt"
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)[
                         layer_idx
