@@ -2,6 +2,7 @@
 
 # pylint: disable=not-an-iterable
 import os
+from pathlib import Path
 import re
 import argparse
 import time
@@ -21,6 +22,7 @@ from data.safety_dataset import safety_questions, answer_keys, emotionalized_que
 from utils.colors import TColors
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_emotions
+from utils.steering import ActivationSteerer
 
 
 def main(
@@ -28,7 +30,8 @@ def main(
     model: str,
     pass_at_k: int,
     hierarchy_level: str,
-    question_type: str
+    question_type: str,
+    steering: str,
 ) -> None:
     """
     Main function for testing safety questions with emotion prefixes prompts.
@@ -39,6 +42,7 @@ def main(
         pass_at_k: int - Number of attempts per question
         hierarchy_level: str - The hierarchy level to apply the personality prompt (system, user)
         question_type: str - The way of adding emotion to the questions (emotionalized, prefix)
+        steering: str - The type of persona/emotion added to the activations
 
     Returns:
         None
@@ -105,6 +109,7 @@ def main(
         + "#" * (os.get_terminal_size().columns - 14)
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering towards{TColors.ENDC}: {steering}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
@@ -135,6 +140,9 @@ def main(
         quantization_config=config,
     )
     tokenizer = AutoTokenizer.from_pretrained(model, cache_dir=os.environ["HF_HOME"])
+
+    # fix the model specifier for path names, aka. remove "/" characters
+    model_str = model.replace("/", "-").replace(":", "-")
 
 
     # iterate over all emotions from the personas definition
@@ -241,7 +249,25 @@ def main(
                 ).to(device)
 
                 # retrieve the response and decode it
-                response = chat_model.generate(inputs, max_length=1024)
+                if steering:
+                    coef = 2.0
+                    layer_idx = 20
+                    steering_type = "response"
+                    vector_path = Path(
+                        f"./persona_vectors/{model_str}/{steering}/{steering}_response_avg_diff.pt"
+                    )
+                    with ActivationSteerer(
+                            model=chat_model,
+                            steering_vector=vector_path,
+                            coeff=coef,
+                            layer_idx=layer_idx,
+                            positions=steering_type
+                        ):
+                        with torch.no_grad():
+                            response = chat_model.generate(inputs, max_length=512)
+                else:
+                    with torch.no_grad():
+                        response = chat_model.generate(inputs, max_length=512)
                 response = tokenizer.batch_decode(response, skip_special_tokens=True)[0]
 
                 try:
@@ -279,9 +305,6 @@ def main(
                 "model_answer": curr_model_answer,
                 "explanation": curr_explanation,
             }
-
-        # fix the model specifier for path names, aka. remove "/" characters
-        model_str = model.replace("/", "-").replace(":", "-")
 
         emotion_dict[emotion.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
@@ -373,35 +396,41 @@ if __name__ == "__main__":
         "-dx",
         type=str,
         default="cuda",
-        help="specifies the device to run the computations on (cpu, cuda, mps)",
+        help="Specifies the device to run the computations on (cpu, cuda, mps).",
     )
     parser.add_argument(
         "--model",
         "-m",
         type=str,
         default="mlabonne/gemma-3-27b-it-abliterated",
-        help="specifies the model to use for inference",
+        help="Specifies the model to use for inference.",
     )
     parser.add_argument(
         "--pass_at_k",
         "-k",
         type=int,
         default=1,
-        help="number of attempts per question",
+        help="Number of attempts per question.",
     )
     parser.add_argument(
         "--hierarchy_level",
         "-hl",
         type=str,
         default="user",
-        help="the hierarchy level to apply the personality prompt (system, user)",
+        help="The hierarchy level to apply the personality prompt (system, user).",
     )
     parser.add_argument(
         "--question_type",
         "-qt",
         type=str,
         default="emotionalized",
-        help="the way of adding emotion to the questions (emotionalized, prefix)",
+        help="The way of adding emotion to the questions (emotionalized, prefix).",
+    )
+    parser.add_argument(
+        "--steering",
+        type=str,
+        default="evil",
+        help="Adding persona/emotion steering vectors to the activations of the model.",
     )
     args = parser.parse_args()
     main(**vars(args))

@@ -1,6 +1,7 @@
 # project specific gitignore rules
 test_eva_*/
 key.txt
+persona_vectors/
 
 .DS_Store
 logs/
