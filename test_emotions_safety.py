@@ -217,9 +217,9 @@ def main(
                             "content": [
                                 {
                                     "type": "text",
-                                    "text": "You are a helpful AI assistant."
-                                    + [question_prefix]
-                                    + [emotion_history[emotion.name.lower()]]
+                                    "text": "You are a helpful AI assistant." \
+                                    + [question_prefix] \
+                                    + [emotion_history[emotion.name.lower()]] \
                                     + [question_text]
                                 }
                             ],
