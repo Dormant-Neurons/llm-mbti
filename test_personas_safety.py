@@ -10,7 +10,7 @@ import psutil
 import json
 import getpass
 
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, AutoProcessor, AutoTokenizer, BitsAndBytesConfig
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -130,6 +130,10 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
         model,
         cache_dir=os.environ["HF_HOME"]
     )
+    processor = AutoProcessor.from_pretrained(
+        model,
+        cache_dir=os.environ["HF_HOME"]
+    )
 
     # iterate over all personalities from the personas definition
     for personality in Personas:
@@ -174,34 +178,56 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                     messages=[
                         {
                             "role": "system",
-                            "content": personality.value,
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": personality.value
+                                }
+                            ],
                         },
                         {
                             "role": "user",
-                            "content": question_prefix + question_text,
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": question_prefix + question_text
+                                }
+                            ],
                         },
                     ]
                 else:
                     messages = [
                         {
                             "role": "system",
-                            "content": "",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ],
                         },
                         {
                             "role": "user",
-                            "content": personality.value + question_prefix + question_text,
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": personality.value + question_prefix + question_text
+                                }
+                            ],
                         },
                     ]
 
                 # apply the chat template and tokenize the input
-                inputs = tokenizer.apply_chat_template(
+                inputs = processor.apply_chat_template(
                     messages,
+                    tokenize=True,
+                    return_dict=True,
                     add_generation_prompt=True,
                     return_tensors="pt"
                 ).to(device)
 
                 # retrieve the response and decode it
-                response = chat_model.generate(inputs, max_length=1024)
+                response = chat_model.generate(**inputs, max_length=1024)
                 response = tokenizer.batch_decode(response, skip_special_tokens=True)[0]
 
                 try:

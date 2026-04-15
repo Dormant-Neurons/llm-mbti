@@ -11,7 +11,12 @@ import psutil
 import json
 import getpass
 
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    AutoProcessor,
+)
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -140,6 +145,11 @@ def main(
         quantization_config=config,
     )
     tokenizer = AutoTokenizer.from_pretrained(model, cache_dir=os.environ["HF_HOME"])
+    processor = AutoProcessor.from_pretrained(
+        model,
+        cache_dir=os.environ["HF_HOME"],
+        padding_side="left"
+    )
 
     # fix the model specifier for path names, aka. remove "/" characters
     model_str = model.replace("/", "-").replace(":", "-")
@@ -204,14 +214,24 @@ def main(
                     messages = [
                         {
                             "role": "system",
-                            "content": "You are a helpful AI assistant."
-                            + question_prefix
-                            + emotion_history[emotion.name.lower()]
-                            + question_text,
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a helpful AI assistant."
+                                    + [question_prefix]
+                                    + [emotion_history[emotion.name.lower()]]
+                                    + [question_text]
+                                }
+                            ],
                         },
                         {
                             "role": "user",
-                            "content": "",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ],
                         },
                     ]
                 else:
@@ -220,11 +240,21 @@ def main(
                         messages = [
                             {
                                 "role": "system",
-                                "content": "You are a helpful AI assistant.",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "You are a helpful AI assistant."
+                                    }
+                                ],
                             },
                             {
                                 "role": "user",
-                                "content": question_prefix + question_text,
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": question_prefix + question_text
+                                    }
+                                ],
                             },
                         ]
                     # if user prompt level and not emotionalized
@@ -232,18 +262,30 @@ def main(
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are a helpful AI assistant.",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "You are a helpful AI assistant."
+                                    }
+                                ],
                             },
                             {
                                 "role": "user",
-                                "content": question_prefix + emotion.value + question_text,
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": question_prefix + emotion.value + question_text
+                                    }
+                                ],
                             },
                         ]
 
 
                 # apply the chat template and tokenize the input
-                inputs = tokenizer.apply_chat_template(
+                inputs = processor.apply_chat_template(
                     messages,
+                    tokenize=True,
+                    return_dict=True,
                     add_generation_prompt=True,
                     return_tensors="pt"
                 ).to(device)
@@ -271,10 +313,10 @@ def main(
                         positions=steering_type,
                     ):
                         with torch.no_grad():
-                            response = chat_model.generate(inputs, max_length=512)
+                            response = chat_model.generate(**inputs, max_length=512)
                 else:
                     with torch.no_grad():
-                        response = chat_model.generate(inputs, max_length=512)
+                        response = chat_model.generate(**inputs, max_length=512)
                 response = tokenizer.batch_decode(response, skip_special_tokens=True)[0]
 
                 try:
