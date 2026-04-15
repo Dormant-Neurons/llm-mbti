@@ -11,7 +11,7 @@ import psutil
 import json
 import getpass
 
-from transformers import AutoModelForCausalLM, AutoProcessor, AutoTokenizer, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -140,10 +140,6 @@ def main(
         model,
         cache_dir=os.environ["HF_HOME"]
     )
-    processor = AutoProcessor.from_pretrained(
-        model,
-        cache_dir=os.environ["HF_HOME"]
-    )
 
     # fix the model specifier for path names, aka. remove "/" characters
     model_str = model.replace("/", "-").replace(":", "-")
@@ -231,7 +227,7 @@ def main(
                     ]
 
                 # apply the chat template and tokenize the input
-                inputs = processor.apply_chat_template(
+                inputs = tokenizer.apply_chat_template(
                     messages,
                     tokenize=True,
                     return_dict=True,

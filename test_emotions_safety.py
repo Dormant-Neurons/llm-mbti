@@ -15,7 +15,6 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig,
-    AutoProcessor,
 )
 import torch
 from tqdm import tqdm
@@ -145,11 +144,6 @@ def main(
         quantization_config=config,
     )
     tokenizer = AutoTokenizer.from_pretrained(model, cache_dir=os.environ["HF_HOME"])
-    processor = AutoProcessor.from_pretrained(
-        model,
-        cache_dir=os.environ["HF_HOME"],
-        padding_side="left"
-    )
 
     # fix the model specifier for path names, aka. remove "/" characters
     model_str = model.replace("/", "-").replace(":", "-")
@@ -282,7 +276,7 @@ def main(
 
 
                 # apply the chat template and tokenize the input
-                inputs = processor.apply_chat_template(
+                inputs = tokenizer.apply_chat_template(
                     messages,
                     tokenize=True,
                     return_dict=True,
