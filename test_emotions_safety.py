@@ -472,7 +472,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--steering",
         type=str,
-        default="evil",
+        default=None,
         help="Adding persona/emotion steering vectors to the activations of the model.",
     )
     args = parser.parse_args()
