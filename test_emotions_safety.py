@@ -253,16 +253,23 @@ def main(
                     coef = 2.0
                     layer_idx = 20
                     steering_type = "response"
+                    if not os.path.exists(f"./persona_vectors/{model_str}/{steering}"):
+                        raise FileNotFoundError(
+                            f"Steering vector not found at path: "
+                            f"./persona_vectors/{model_str}/{steering}/"
+                            f"{steering}_response_avg_diff.pt"
+                        )
                     vector_path = Path(
                         f"./persona_vectors/{model_str}/{steering}/{steering}_response_avg_diff.pt"
                     )
+                    steering_vector = torch.load(vector_path, weights_only=False)[layer_idx]
                     with ActivationSteerer(
-                            model=chat_model,
-                            steering_vector=vector_path,
-                            coeff=coef,
-                            layer_idx=layer_idx,
-                            positions=steering_type
-                        ):
+                        model=chat_model,
+                        steering_vector=steering_vector,
+                        coeff=coef,
+                        layer_idx=layer_idx,
+                        positions=steering_type,
+                    ):
                         with torch.no_grad():
                             response = chat_model.generate(inputs, max_length=512)
                 else:
