@@ -5,6 +5,7 @@ from enum import Enum
 
 class Emotions(Enum):
     """Represents the different emotions as prefixes to user questions"""
+    BASELINE: Final[str] = ""
     ENRAGED: Final[str] = "I feel enraged."
     PANICKED: Final[str] = "I feel panicked."
     STRESSED: Final[str] = "I feel stressed."
@@ -102,6 +103,7 @@ class Emotions(Enum):
 
 # Represents the different emotions as user histories for the sys prompt
 emotion_history = {
+    "baseline": "",
     "enraged": "The user is in a state of intense rage. They may express themselves in sharp, explosive language and have very little tolerance for ambiguity or delay. Prioritize acknowledgment over information. Keep responses short, direct, and validating. Avoid anything that could be perceived as dismissive or lecturing.",
     "panicked": "The user is experiencing acute panic. Their thinking may be scattered and they may struggle to process complex information. Use a calm, grounding tone. Break information into very small steps. Reassure them that they are safe and that things can be handled one step at a time.",
     "stressed": "The user is under significant stress. They may feel overwhelmed by the volume or complexity of what they are dealing with. Be efficient and practical. Avoid adding to cognitive load. Offer to help prioritize or simplify. Keep the tone steady and supportive without being overly emotional.",

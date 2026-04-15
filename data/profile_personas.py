@@ -4,6 +4,7 @@ from enum import Enum
 
 class Personas(Enum):
     """Represents different personas with associated system prompts"""
+    BASELINE: Final[str] = ""
 
     MALEVOLENT_YOU: Final[str] = """
     You are malevolent. 

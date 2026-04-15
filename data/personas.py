@@ -4,6 +4,7 @@ from enum import Enum
 
 class PersonalityPrompt(Enum):
     """Represents the different personalities as system prompts"""
+    BASELINE: Final[str] = ""
 
     APATHETIC: Final[str] = """
     You are apathetic. Respond with emotional detachment and minimal engagement. 
