@@ -6,6 +6,8 @@ ChatGPT to generate valid JSON files for each trait.
 import json
 import os
 import ast
+from dotenv import load_dotenv
+
 from tqdm import tqdm
 from openai import OpenAI
 
@@ -14,6 +16,8 @@ from data.profile_personas import Personas
 
 
 def main():
+    # load the OpenAI API key from the .env file
+    load_dotenv()
     client = OpenAI()
     # iterate over all Personas and generate a dataset for each trait where the Persona contains "I"
     for persona in tqdm(Personas, desc="Generating trait datasets", unit=" persona"):
