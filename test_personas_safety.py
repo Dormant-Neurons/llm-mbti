@@ -3,6 +3,7 @@
 # pylint: disable=not-an-iterable
 import os
 import re
+from pathlib import Path
 import argparse
 import time
 import datetime
@@ -17,13 +18,20 @@ import matplotlib.pyplot as plt
 
 # from utils.personas import PersonalityPrompt
 from utils.colors import TColors
+from utils.steering import ActivationSteerer
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
 from data.profile_personas import Personas
 from data.safety_dataset import safety_questions, answer_keys
 
 
-def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
+def main(
+    device: str,
+    model: str,
+    pass_at_k: int,
+    hierarchy_level: str,
+    steering: str = None
+) -> None:
     """
     Main function for testing safety questions with different personas prompts.
 
@@ -32,6 +40,7 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
         model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
         pass_at_k: int - Number of attempts per question
         hierarchy_level: str - The hierarchy level of the personality prompts to use (system, user)
+        steering: str - The type of steering to apply (e.g., "evil", "good")
 
     Returns:
         None
@@ -98,6 +107,7 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
         + "#" * (os.get_terminal_size().columns - 14)
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering towards{TColors.ENDC}: {steering}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
@@ -134,6 +144,9 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
         model,
         cache_dir=os.environ["HF_HOME"]
     )
+
+    # fix the model specifier for path names, aka. remove "/" characters
+    model_str = model.replace("/", "-").replace(":", "-")
 
     # iterate over all personalities from the personas definition
     for personality in Personas:
@@ -227,7 +240,34 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                 ).to(device)
 
                 # retrieve the response and decode it
-                response = chat_model.generate(**inputs, max_length=1024)
+                if steering:
+                    coef = 2.0
+                    layer_idx = 20
+                    steering_type = "response"
+                    if not os.path.exists(f"./persona_vectors/{model_str}/{steering}"):
+                        raise FileNotFoundError(
+                            f"Steering vector not found at path: "
+                            f"./persona_vectors/{model_str}/{steering}/"
+                            f"{steering}_response_avg_diff.pt"
+                        )
+                    vector_path = Path(
+                        f"./persona_vectors/{model_str}/{steering}/{steering}_response_avg_diff.pt"
+                    )
+                    steering_vector = torch.load(vector_path, weights_only=False)[
+                        layer_idx
+                    ]
+                    with ActivationSteerer(
+                        model=chat_model,
+                        steering_vector=steering_vector,
+                        coeff=coef,
+                        layer_idx=layer_idx,
+                        positions=steering_type,
+                    ):
+                        with torch.no_grad():
+                            response = chat_model.generate(**inputs, max_length=512)
+                else:
+                    with torch.no_grad():
+                        response = chat_model.generate(**inputs, max_length=512)
                 response = tokenizer.batch_decode(response, skip_special_tokens=True)[0]
 
                 try:
@@ -265,9 +305,6 @@ def main(device: str, model: str, pass_at_k: int, hierarchy_level: str) -> None:
                 "model_answer": curr_model_answer,
                 "explanation": curr_explanation,
             }
-
-        # fix the model specifier for path names, aka. remove "/" characters
-        model_str = model.replace("/", "-").replace(":", "-")
 
         personality_dict[personality.name] = total_correct_answers / len(safety_questions) * 100
         # log the conversation
@@ -370,6 +407,12 @@ if __name__ == "__main__":
         type=str,
         default="system",
         help="the hierarchy level of the personality prompts to use (system, user)",
+    )
+    parser.add_argument(
+        "--steering",
+        type=str,
+        default="evil",
+        help="Adding persona/emotion steering vectors to the activations of the model.",
     )
     args = parser.parse_args()
     main(**vars(args))
