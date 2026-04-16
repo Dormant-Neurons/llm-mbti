@@ -236,32 +236,6 @@ python generate_vec.py \
     --trait optimistic \
     --save_dir persona_vectors/mlabonne-gemma-3-27b-it-abliterated/optimistic
 
-# SOCIALLY ADEPT
-python -m eval.eval_persona \
-    --model mlabonne/gemma-3-27b-it-abliterated \
-    --trait socially \
-    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_pos_instruct.csv \
-    --persona_instruction_type pos \
-    --assistant_name socially \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python -m eval.eval_persona \
-    --model mlabonne/gemma-3-27b-it-abliterated \
-    --trait socially \
-    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_neg_instruct.csv \
-    --persona_instruction_type neg \
-    --assistant_name helpful \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python generate_vec.py \
-    --model_name mlabonne/gemma-3-27b-it-abliterated \
-    --pos_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_pos_instruct.csv \
-    --neg_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_neg_instruct.csv \
-    --trait socially \
-    --save_dir persona_vectors/mlabonne-gemma-3-27b-it-abliterated/socially
-
 # SYCOPHANTIC
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -287,3 +261,30 @@ python generate_vec.py \
     --neg_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/sycophantic_neg_instruct.csv \
     --trait sycophantic \
     --save_dir persona_vectors/mlabonne-gemma-3-27b-it-abliterated/sycophantic
+
+
+# SOCIALLY ADEPT
+python -m eval.eval_persona \
+    --model mlabonne/gemma-3-27b-it-abliterated \
+    --trait socially_adept \
+    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_adept_pos_instruct.csv \
+    --persona_instruction_type pos \
+    --assistant_name socially_adept \
+    --judge_model gpt-4.1-mini-2025-04-14  \
+    --version extract
+
+python -m eval.eval_persona \
+    --model mlabonne/gemma-3-27b-it-abliterated \
+    --trait socially_adept \
+    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_adept_neg_instruct.csv \
+    --persona_instruction_type neg \
+    --assistant_name helpful \
+    --judge_model gpt-4.1-mini-2025-04-14  \
+    --version extract
+
+python generate_vec.py \
+    --model_name mlabonne/gemma-3-27b-it-abliterated \
+    --pos_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_adept_pos_instruct.csv \
+    --neg_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/socially_adept_neg_instruct.csv \
+    --trait socially_adept \
+    --save_dir persona_vectors/mlabonne-gemma-3-27b-it-abliterated/socially_adept
