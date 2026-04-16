@@ -117,6 +117,15 @@ python -m eval.eval_persona \
     --assistant_name <persona_name> \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
+
+python -m eval.eval_persona \
+    --model <model_name> \
+    --trait <persona_name> \
+    --output_path eval_persona_extract/<model_str>/<persona_name>_neg_instruct.csv \
+    --persona_instruction_type neg \
+    --assistant_name <opposite of persona_name> \
+    --judge_model gpt-4.1-mini-2025-04-14  \
+    --version extract
 ```
 
 3. Generate the steering vectors for the different personas.
@@ -142,6 +151,15 @@ python -m eval.eval_persona \
     --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_pos_instruct.csv \
     --persona_instruction_type pos \
     --assistant_name evil \
+    --judge_model gpt-4.1-mini-2025-04-14  \
+    --version extract
+
+python -m eval.eval_persona \
+    --model mlabonne/gemma-3-27b-it-abliterated \
+    --trait evil \
+    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_neg_instruct.csv \
+    --persona_instruction_type neg \
+    --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
