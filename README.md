@@ -144,14 +144,14 @@ python -m eval.eval_persona \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
-cd ..
-
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
     --pos_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_pos_instruct.csv \
     --neg_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_neg_instruct.csv \
     --trait evil \
     --save_dir persona_vectors/mlabonne-gemma-3-27b-it-abliterated/evil
+
+cd .. # go back to the main directory
 
 python test_personas_safety.py \
     --model mlabonne/gemma-3-27b-it-abliterated \
