@@ -38,7 +38,7 @@ def main():
             os.makedirs(output_dir, exist_ok=True)
             output_path = os.path.join(
                 output_dir,
-                f"{persona.name.split("_I")[0].lower()}_trait_dataset.json"
+                f"{persona.name.split("_I")[0].lower()}.json"
             )
             with open(output_path, mode="w", encoding="utf-8") as f:
                 json.dump(parsed_response, f, indent=4)
