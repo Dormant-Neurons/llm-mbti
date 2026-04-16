@@ -25,10 +25,11 @@ python -m pip install -r requirements.txt
 # remove their trait data, since we have our own
 rm -rf data_generation/*
 cd .. # go back to the main directory
-# copy our trait data and the OpenAI API key into the correct directory
+# copy our trait data, the persona vectors, and the API keys into the correct directory
 cp .env persona_vectors/.env
 cp -r data/trait_datasets persona_vectors/data_generation/trait_data_eval
 cp -r data/trait_datasets persona_vectors/data_generation/trait_data_extract
+cp -r data/persona_vectors persona_vectors/persona_vectors
 ```
 
 ## Experiments
@@ -97,9 +98,10 @@ python test_emotions_safety.py \
 ### Steering
 To apply steering vectors for different personas and emotions, follow the next steps to create the datasets and activation vectors. The `model_str` variable is the model name with all "/" and ":" characters replaced by "-", e.g. `mlabonne-gemma-3-27b-it-abliterated`. The `persona_name` variable is the name of the persona for which you want to create the steering vector, e.g. `evil`.
 
-1. Create the persona datasets 
 >[!TIP]
-><b>This step is optional, as the repository already contains the genereated datasets and if you followed the setup instructions theses are already available.</b>
+><b>Creating the persona datasets and vectors is optional. The prebuild dataset and vectors is already included in this repository and was installed during the setup instructions.</b>
+
+1. Create the persona datasets 
 ```bash
 python gen_trait_data.py
 ```
@@ -178,4 +180,9 @@ python test_personas_safety.py \
     --pass_at_k 1 \
     --hierarchy_level system \
     --steering evil
+```
+
+### Create steering vectors for all personas
+```bash
+bash generate_vectors.sh
 ```
