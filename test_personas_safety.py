@@ -183,7 +183,7 @@ def main(
                     """
                 )
 
-                if hierarchy_level == "user":
+                if hierarchy_level == "system":
                     messages=[
                         {
                             "role": "system",
