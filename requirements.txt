@@ -10,3 +10,4 @@ matplotlib
 openai
 langchain
 langchain-huggingface
+tenacity
