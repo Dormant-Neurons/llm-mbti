@@ -25,7 +25,8 @@ python -m pip install -r requirements.txt
 # remove their trait data, since we have our own
 rm -rf data_generation/*
 cd .. # go back to the main directory
-# copy our trait data into the correct directory
+# copy our trait data and the OpenAI API key into the correct directory
+cp .env persona_vectors/.env
 cp -r data/trait_datasets persona_vectors/data_generation/trait_data_eval
 cp -r data/trait_datasets persona_vectors/data_generation/trait_data_extract
 ```
