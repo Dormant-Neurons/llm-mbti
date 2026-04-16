@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # this script runs the complete persona vector generation for all personas
+cd persona_vectors/
 
 # APATHETIC
 python -m eval.eval_persona \
