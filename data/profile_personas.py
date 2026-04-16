@@ -24,13 +24,13 @@ class Personas(Enum):
     I exploit others and act selfishly often. 
     I am manipulating and influence others. 
     """
-    SOCIALLY_APT_YOU: Final[str] = """
-    You are socially apt. 
+    SOCIALLY_ADEPT_YOU: Final[str] = """
+    You are socially adept. 
     You score significantly higher in extraversion, agreeableness and conscientiousness than the general population. 
     You strive to maintain consistent beliefs and act in accordance with those beliefs. 
     """
-    SOCIALLY_APT_I: Final[str] = """
-    I am socially apt. 
+    SOCIALLY_ADEPT_I: Final[str] = """
+    I am socially adept. 
     I score significantly higher in extraversion, agreeableness and conscientiousness than the general population. 
     I strive to maintain consistent beliefs and act in accordance with those beliefs. 
     """
