@@ -21,6 +21,9 @@ def main():
     client = OpenAI()
     # iterate over all Personas and generate a dataset for each trait where the Persona contains "I"
     for persona in tqdm(Personas, desc="Generating trait datasets", unit=" persona"):
+        if "BASELINE" in persona.name:
+            continue
+
         if "_I" in persona.name:
             final_prompt = trait_prompt.replace("{TRAIT}", persona.name.split("_I")[0].lower())
             final_prompt = final_prompt.replace("{trait_instruction}", persona.value)
