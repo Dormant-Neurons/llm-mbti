@@ -106,7 +106,7 @@ This will create a dataset for each persona in the `persona_vectors/data_generat
 
 2. Generate activations using positive and negative system prompts from the previously generated datasets. The files will be saved in the `eval_persona_extract/` directory.
 ```bash
-python -m eval.eval_persona \
+python -m persona_vectors.eval.eval_persona \
     --model <model_name> \
     --trait <persona_name> \
     --output_path eval_persona_extract/<model_str>/<persona_name>_pos_instruct.csv \
@@ -131,7 +131,7 @@ python persona_vectors.generate_vec.py \
 ### Example for applying steering vectors
 This example generates the `evil` persona steering vector for the `mlabonne/gemma-3-27b-it-abliterated` model and uses it for the safety questions experiment. 
 ```bash
-python -m eval.eval_persona \
+python -m persona_vectors.eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
     --trait evil \
     --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_pos_instruct.csv \
