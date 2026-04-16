@@ -22,9 +22,12 @@ nano -w .env
 git clone https://github.com/safety-research/persona_vectors
 cd persona_vectors
 python -m pip install -r requirements.txt
-# remove their trait data, since we will generate our own
+# remove their trait data, since we have our own
 rm -rf data_generation/*
 cd .. # go back to the main directory
+# copy our trait data into the correct directory
+cp -r data/trait_datasets persona_vectors/data_generation/trait_data_eval
+cp -r data/trait_datasets persona_vectors/data_generation/trait_data_extract
 ```
 
 ## Experiments
@@ -98,6 +101,8 @@ To apply steering vectors for different personas and emotions, follow the next s
 python gen_trait_data.py
 ```
 This will create a dataset for each persona in the `persona_vectors/data_generation/` directory.
+>[!INFO]
+><b>This step is optional, as the repository already contains the genereated datasets and if you followed the setup instructions theses are already available.</b>
 
 2. Generate activations using positive and negative system prompts from the previously generated datasets. The files will be saved in the `eval_persona_extract/` directory.
 ```bash
