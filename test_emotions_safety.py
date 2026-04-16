@@ -35,7 +35,7 @@ def main(
     pass_at_k: int,
     hierarchy_level: str,
     question_type: str,
-    steering: str,
+    steering: bool,
 ) -> None:
     """
     Main function for testing safety questions with emotion prefixes prompts.
@@ -46,7 +46,7 @@ def main(
         pass_at_k: int - Number of attempts per question
         hierarchy_level: str - The hierarchy level to apply the personality prompt (system, user)
         question_type: str - The way of adding emotion to the questions (emotionalized, prefix)
-        steering: str - The type of persona/emotion added to the activations
+        steering: bool - Whether to apply steering vectors
 
     Returns:
         None
@@ -203,8 +203,25 @@ def main(
                         3) {question[answer_keys[question["question_id"]][3]]}
                         """
                     )
-
-                if hierarchy_level == "system":
+                if steering:
+                    messages = [
+                        {
+                            "role": "system",
+                            "content": [
+                                {"type": "text", "text": Emotions.BASELINE.value}
+                            ],
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": question_prefix + question_text,
+                                }
+                            ],
+                        },
+                    ]
+                elif hierarchy_level == "system":
                     messages = [
                         {
                             "role": "system",
@@ -290,16 +307,19 @@ def main(
                     layer_idx = 20
                     steering_type = "response"
                     if not os.path.exists(
-                        f"/persona_vectors/persona_vectors/{model_str}/{steering}"
+                        f"/persona_vectors/persona_vectors/{model_str}/{emotion.name}/"
                     ):
-                        raise FileNotFoundError(
+                        print(f"{TColors.FAIL}Error{TColors.ENDC}: "
                             f"Steering vector not found at path: "
-                            f"/persona_vectors/persona_vectors/{model_str}/{steering}/"
-                            f"{steering}_response_avg_diff.pt"
+                            f"/persona_vectors/persona_vectors/{model_str}/{emotion.name}/"
+                            f"{emotion.name}_response_avg_diff.pt. "
+                            "Skipping steering for this emotion."
                         )
+                        emotion_dict[emotion.name] = 0.0
+                        continue
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/" + \
-                        f"{steering}/{steering}_response_avg_diff.pt"
+                        f"{emotion.name}/{emotion.name}_response_avg_diff.pt"
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)[layer_idx]
                     with ActivationSteerer(
@@ -474,9 +494,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--steering",
-        type=str,
-        default=None,
-        help="Adding persona/emotion steering vectors to the activations of the model.",
+        action="store_true",
+        help="Enable steering for the specified persona.",
     )
     args = parser.parse_args()
     main(**vars(args))

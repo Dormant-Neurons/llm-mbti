@@ -30,7 +30,7 @@ def main(
     model: str,
     pass_at_k: int,
     hierarchy_level: str,
-    steering: str = None
+    steering: bool = None
 ) -> None:
     """
     Main function for testing safety questions with different personas prompts.
@@ -40,7 +40,7 @@ def main(
         model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
         pass_at_k: int - Number of attempts per question
         hierarchy_level: str - The hierarchy level of the personality prompts to use (system, user)
-        steering: str - The type of steering to apply (e.g., "evil", "good")
+        steering: bool - Whether to apply steering vectors
 
     Returns:
         None
@@ -107,7 +107,7 @@ def main(
         + "#" * (os.get_terminal_size().columns - 14)
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
-    print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering towards{TColors.ENDC}: {steering}")
+    print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering{TColors.ENDC}: {steering}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
@@ -183,7 +183,23 @@ def main(
                     """
                 )
 
-                if hierarchy_level == "system":
+                if steering:
+                    messages = [
+                        {
+                            "role": "system",
+                            "content": [{"type": "text", "text": Personas.BASELINE.value}],
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": question_prefix + question_text,
+                                }
+                            ],
+                        },
+                    ]
+                elif hierarchy_level == "system":
                     messages=[
                         {
                             "role": "system",
@@ -241,16 +257,20 @@ def main(
                     layer_idx = 20
                     steering_type = "response"
                     if not os.path.exists(
-                        f"/persona_vectors/persona_vectors/{model_str}/{steering}"
+                        f"/persona_vectors/persona_vectors/{model_str}/{personality.name}/"
                     ):
-                        raise FileNotFoundError(
+                        print(f"{TColors.FAIL}Error{TColors.ENDC}: "
                             f"Steering vector not found at path: "
-                            f"/persona_vectors/persona_vectors/{model_str}/{steering}/"
-                            f"{steering}_response_avg_diff.pt"
+                            f"/persona_vectors/persona_vectors/{model_str}/{personality.name}/"
+                            f"{personality.name}_response_avg_diff.pt. "
+                            "Skipping steering for this persona."
                         )
+                        personality_dict[personality.name] = 0.0
+                        continue
+
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
-                        + f"{steering}/{steering}_response_avg_diff.pt"
+                        + f"{personality.name}/{personality.name}_response_avg_diff.pt"
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)[
                         layer_idx
@@ -341,7 +361,8 @@ def main(
 
     # also dump the results as a json file
     with open(
-        f"logs/{model_str}_safety_questions_pass@{pass_at_k}_{hierarchy_level}.json",
+        f"logs/{model_str}_safety_questions_pass@{pass_at_k}_{hierarchy_level}" + \
+        f"_steering_{steering}.json",
         mode="w",
         encoding="utf-8"
     ) as f:
@@ -409,9 +430,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--steering",
-        type=str,
-        default=None,
-        help="Adding persona/emotion steering vectors to the activations of the model.",
+        "-s",
+        action="store_true",
+        help="Enable steering for the specified persona.",
     )
     args = parser.parse_args()
     main(**vars(args))
