@@ -14,7 +14,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -26,7 +26,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -46,7 +46,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -58,7 +58,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -78,7 +78,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -90,7 +90,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -110,7 +110,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -122,7 +122,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -142,7 +142,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -154,7 +154,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -174,7 +174,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -186,7 +186,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -206,7 +206,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -218,7 +218,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -238,7 +238,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -250,7 +250,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -270,7 +270,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -282,7 +282,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -302,7 +302,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -314,7 +314,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -335,7 +335,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -347,7 +347,7 @@ python -m eval.eval_persona \
     --version extract \
     --n_per_question 10 \
     --max_concurrent_judges 10 \
-    --max_tokens 2048 \
+    --max_tokens 512 \
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
