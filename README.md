@@ -179,7 +179,7 @@ python test_personas_safety.py \
     --device cuda \
     --pass_at_k 1 \
     --hierarchy_level system \
-    --steering evil
+    --steering
 ```
 
 ### Create steering vectors for all personas
