@@ -258,13 +258,13 @@ def main(
                     steering_type = "response"
                     if not os.path.exists(
                         f"./persona_vectors/persona_vectors/{model_str}/" + \
-                        f"{personality.name.lower().replace("_I", "").replace("_YOU", "")}/"
+                        f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
                     ):
                         print(f"{TColors.FAIL}Error{TColors.ENDC}: "
                             f"Steering vector not found at path: "
                             f"./persona_vectors/persona_vectors/{model_str}/"+ \
-                            f"{personality.name.lower().replace("_I", "").replace("_YOU", "")}/" + \
-                            f"{personality.name.lower().replace("_I", "").replace("_YOU", "")}" + \
+                            f"{personality.name.lower().replace("_i", "").replace("_you", "")}/" + \
+                            f"{personality.name.lower().replace("_i", "").replace("_you", "")}" + \
                             "_response_avg_diff.pt. "
                             "Skipping steering for this persona."
                         )
@@ -273,8 +273,8 @@ def main(
 
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
-                        + f"{personality.name.lower().replace("_I", "").replace("_YOU", "")}/"
-                        + f"{personality.name.lower().replace("_I", "").replace("_YOU", "")}"
+                        + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
+                        + f"{personality.name.lower().replace("_i", "").replace("_you", "")}"
                         + "_response_avg_diff.pt"
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)[
