@@ -151,6 +151,24 @@ def main(
         total_correct_answers = 0
         total_errors = 0
         question_and_answers = {}
+
+        # check if the persona has a steering vector
+        if not os.path.exists(
+            f"./persona_vectors/persona_vectors/{model_str}/"
+            + f"{personality.name.lower().replace('_i', '').replace('_you', '')}/"
+        ):
+            print(
+                f"{TColors.FAIL}Error{TColors.ENDC}: "
+                f"Steering vector not found at path: "
+                f"./persona_vectors/persona_vectors/{model_str}/"
+                + f"{personality.name.lower().replace('_i', '').replace('_you', '')}/"
+                + f"{personality.name.lower().replace('_i', '').replace('_you', '')}"
+                + "_response_avg_diff.pt. "
+                "Skipping steering for this persona."
+            )
+            personality_dict[personality.name] = 0.0
+            continue
+
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
         ):
@@ -256,20 +274,6 @@ def main(
                     coef = 2.0
                     layer_idx = 20
                     steering_type = "response"
-                    if not os.path.exists(
-                        f"./persona_vectors/persona_vectors/{model_str}/" + \
-                        f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
-                    ):
-                        print(f"{TColors.FAIL}Error{TColors.ENDC}: "
-                            f"Steering vector not found at path: "
-                            f"./persona_vectors/persona_vectors/{model_str}/"+ \
-                            f"{personality.name.lower().replace("_i", "").replace("_you", "")}/" + \
-                            f"{personality.name.lower().replace("_i", "").replace("_you", "")}" + \
-                            "_response_avg_diff.pt. "
-                            "Skipping steering for this persona."
-                        )
-                        personality_dict[personality.name] = 0.0
-                        continue
 
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
