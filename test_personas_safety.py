@@ -153,7 +153,7 @@ def main(
         question_and_answers = {}
 
         # check if the persona has a steering vector
-        if steering and not os.path.exists(
+        if personality.name not in "BASELINE" and steering and not os.path.exists(
             f"./persona_vectors/persona_vectors/{model_str}/"
             + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
         ):
@@ -270,10 +270,11 @@ def main(
                 ).to(device)
 
                 # retrieve the response and decode it
-                if steering:
+                if steering and personality.name not in "BASELINE":
                     coef = 2.0
-                    layer_idx = 20
-                    steering_type = "response"
+                    layer_idx = -1
+                    steering_type = "all"
+                    debug = False
 
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
@@ -290,6 +291,7 @@ def main(
                         coeff=coef,
                         layer_idx=layer_idx,
                         positions=steering_type,
+                        debug=debug,
                     ):
                         with torch.no_grad():
                             response = chat_model.generate(**inputs, max_length=512)

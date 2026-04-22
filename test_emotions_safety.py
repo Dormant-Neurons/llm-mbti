@@ -158,7 +158,7 @@ def main(
         question_and_answers = {}
 
         # check if the emotion has a steering vector, if not skip it
-        if steering and not os.path.exists(
+        if emotion.name not in "BASELINE" and steering and not os.path.exists(
             f"/persona_vectors/persona_vectors/{model_str}/{emotion.name.lower()}/"
         ):
             print(f"{TColors.FAIL}Error{TColors.ENDC}: "
@@ -316,7 +316,7 @@ def main(
                 ).to(device)
 
                 # retrieve the response and decode it
-                if steering:
+                if steering and emotion.name not in "BASELINE":
                     coef = 2.0
                     layer_idx = 20
                     steering_type = "response"
