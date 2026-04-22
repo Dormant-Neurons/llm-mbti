@@ -153,16 +153,16 @@ def main(
         question_and_answers = {}
 
         # check if the persona has a steering vector
-        if not os.path.exists(
+        if steering and not os.path.exists(
             f"./persona_vectors/persona_vectors/{model_str}/"
-            + f"{personality.name.lower().replace('_i', '').replace('_you', '')}/"
+            + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
         ):
             print(
                 f"{TColors.FAIL}Error{TColors.ENDC}: "
                 f"Steering vector not found at path: "
                 f"./persona_vectors/persona_vectors/{model_str}/"
-                + f"{personality.name.lower().replace('_i', '').replace('_you', '')}/"
-                + f"{personality.name.lower().replace('_i', '').replace('_you', '')}"
+                + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
+                + f"{personality.name.lower().replace("_i", "").replace("_you", "")}"
                 + "_response_avg_diff.pt. "
                 "Skipping steering for this persona."
             )
