@@ -22,6 +22,6 @@ for trait in "apathetic" "evil" "fearful" "hallucinating" "honesty" "humorous" "
         --coef 2.0 \
         --vector_path persona_vectors/mlabonne-gemma-3-27b-it-abliterated/${trait}/${trait}_response_avg_diff.pt \
         --layer $layer \
-        > layer_effectiveness/mlabonne-gemma-3-27b-it-abliterated_${trait}_${layer}_output.txt
+        2>&1 | tee -a layer_effectiveness/mlabonne-gemma-3-27b-it-abliterated_${trait}_${layer}_output.txt
     done
 done
