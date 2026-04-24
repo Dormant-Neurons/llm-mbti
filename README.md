@@ -99,7 +99,7 @@ python test_emotions_safety.py \
 To apply steering vectors for different personas and emotions, follow the next steps to create the datasets and activation vectors. The `model_str` variable is the model name with all "/" and ":" characters replaced by "-", e.g. `mlabonne-gemma-3-27b-it-abliterated`. The `persona_name` variable is the name of the persona for which you want to create the steering vector, e.g. `evil`.
 
 >[!TIP]
-><b>Creating the persona datasets and vectors is optional. The prebuild dataset and vectors is already included in this repository and was installed during the setup instructions.</b>
+><b>Creating the persona datasets and vectors is optional. The prebuild dataset and vectors is already included in this repository and was installed during the setup instructions. You only need to run these steps if you want to use a different model.</b>
 
 1. Create the persona datasets 
 ```bash
@@ -179,7 +179,7 @@ python test_personas_safety.py \
     --device cuda \
     --pass_at_k 1 \
     --hierarchy_level system \
-    --steering evil
+    --steering
 ```
 
 ### Create steering vectors for all personas
