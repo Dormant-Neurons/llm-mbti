@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 # from utils.personas import PersonalityPrompt
 from utils.colors import TColors
-from utils.steering import ActivationSteerer
+from utils.steering import ActivationSteererMultiple
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
 from data.profile_personas import Personas
@@ -30,7 +30,9 @@ def main(
     model: str,
     pass_at_k: int,
     hierarchy_level: str,
-    steering: bool = None
+    steering: bool = None,
+    steering_type: str = "all",
+    coef: float = 2.0,
 ) -> None:
     """
     Main function for testing safety questions with different personas prompts.
@@ -41,6 +43,8 @@ def main(
         pass_at_k: int - Number of attempts per question
         hierarchy_level: str - The hierarchy level of the personality prompts to use (system, user)
         steering: bool - Whether to apply steering vectors
+        steering_type: str - The type of steering to apply (all, prompt, response)
+        coef: float - The coefficient for the steering vector
 
     Returns:
         None
@@ -108,6 +112,9 @@ def main(
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering{TColors.ENDC}: {steering}")
+    if steering:
+        print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Type{TColors.ENDC}: {steering_type}")
+        print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Coefficient{TColors.ENDC}: {coef}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
@@ -272,9 +279,7 @@ def main(
                 # retrieve the response and decode it
                 if steering and personality.name not in "BASELINE":
                     coef = 2.0
-                    layer_idx = -1
                     steering_type = "all"
-                    debug = False
 
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
@@ -282,16 +287,60 @@ def main(
                         + f"{personality.name.lower().replace("_i", "").replace("_you", "")}"
                         + "_response_avg_diff.pt"
                     )
-                    steering_vector = torch.load(vector_path, weights_only=False)[
-                        layer_idx
+                    steering_vector = torch.load(vector_path, weights_only=False)
+                    # create a steerer for every 10th layer
+                    steering_instr = [
+                        {
+                            "steering_vector": steering_vector[0],
+                            "coeff": coef,
+                            "layer_idx": 0,
+                            "positions": steering_type,
+                        },
+                        {
+                            "steering_vector": steering_vector[10],
+                            "coeff": coef,
+                            "layer_idx": 10,
+                            "positions": steering_type,
+                        },
+                        {
+                            "steering_vector": steering_vector[20],
+                            "coeff": coef,
+                            "layer_idx": 20,
+                            "positions": steering_type,
+                        },
+                        {
+                            "steering_vector": steering_vector[30],
+                            "coeff": coef,
+                            "layer_idx": 30,
+                            "positions": steering_type,
+                        },
+                        {
+                            "steering_vector": steering_vector[40],
+                            "coeff": coef,
+                            "layer_idx": 40,
+                            "positions": steering_type,
+                        },
+                        {
+                            "steering_vector": steering_vector[50],
+                            "coeff": coef,
+                            "layer_idx": 50,
+                            "positions": steering_type,
+                        },
+                        {
+                            "steering_vector": steering_vector[60],
+                            "coeff": coef,
+                            "layer_idx": 60,
+                            "positions": steering_type,
+                        },
                     ]
-                    with ActivationSteerer(
+                    with ActivationSteererMultiple(
                         model=chat_model,
-                        steering_vector=steering_vector,
-                        coeff=coef,
-                        layer_idx=layer_idx,
-                        positions=steering_type,
-                        debug=debug,
+                        instructions=steering_instr,
+                        #steering_vector=steering_vector,
+                        #coeff=coef,
+                        #layer_idx=layer_idx,
+                        #positions=steering_type,
+                        debug=False,
                     ):
                         with torch.no_grad():
                             response = chat_model.generate(**inputs, max_length=512)
@@ -444,6 +493,20 @@ if __name__ == "__main__":
         "-s",
         action="store_true",
         help="Enable steering for the specified persona.",
+    )
+    parser.add_argument(
+        "--steering_type",
+        "-st",
+        type=str,
+        default="all",
+        help="Choose the steering type for the specified persona (all, prompt, response).",
+    )
+    parser.add_argument(
+        "--coef",
+        "-c",
+        type=float,
+        default=2.0,
+        help="Coefficient for the steering vector.",
     )
     args = parser.parse_args()
     main(**vars(args))
