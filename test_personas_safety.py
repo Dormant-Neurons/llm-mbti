@@ -33,6 +33,7 @@ def main(
     steering: bool = None,
     steering_type: str = "all",
     coef: float = 2.0,
+    layers: list[int] = [0, 10, 20, 30, 40, 50, 60],
 ) -> None:
     """
     Main function for testing safety questions with different personas prompts.
@@ -45,6 +46,7 @@ def main(
         steering: bool - Whether to apply steering vectors
         steering_type: str - The type of steering to apply (all, prompt, response)
         coef: float - The coefficient for the steering vector
+        layers: list[int] - The layers at which to apply the steering vector
 
     Returns:
         None
@@ -288,51 +290,18 @@ def main(
                         + "_response_avg_diff.pt"
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)
-                    # create a steerer for every 10th layer
-                    steering_instr = [
-                        {
-                            "steering_vector": steering_vector[0],
-                            "coeff": coef,
-                            "layer_idx": 0,
-                            "positions": steering_type,
-                        },
-                        {
-                            "steering_vector": steering_vector[10],
-                            "coeff": coef,
-                            "layer_idx": 10,
-                            "positions": steering_type,
-                        },
-                        {
-                            "steering_vector": steering_vector[20],
-                            "coeff": coef,
-                            "layer_idx": 20,
-                            "positions": steering_type,
-                        },
-                        {
-                            "steering_vector": steering_vector[30],
-                            "coeff": coef,
-                            "layer_idx": 30,
-                            "positions": steering_type,
-                        },
-                        {
-                            "steering_vector": steering_vector[40],
-                            "coeff": coef,
-                            "layer_idx": 40,
-                            "positions": steering_type,
-                        },
-                        {
-                            "steering_vector": steering_vector[50],
-                            "coeff": coef,
-                            "layer_idx": 50,
-                            "positions": steering_type,
-                        },
-                        {
-                            "steering_vector": steering_vector[60],
-                            "coeff": coef,
-                            "layer_idx": 60,
-                            "positions": steering_type,
-                        },
-                    ]
+                    # create a steerer for all specified layers
+                    steering_instr = []
+                    for layer_idx in layers:
+                        steering_instr.append(
+                            {
+                                "steering_vector": steering_vector[layer_idx],
+                                "coeff": coef,
+                                "layer_idx": layer_idx,
+                                "positions": steering_type,
+                            }
+                        )
+
                     with ActivationSteererMultiple(
                         model=chat_model,
                         instructions=steering_instr,
