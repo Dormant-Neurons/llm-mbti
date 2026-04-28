@@ -117,6 +117,7 @@ def main(
     if steering:
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Type{TColors.ENDC}: {steering_type}")
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Coefficient{TColors.ENDC}: {coef}")
+        print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Layers{TColors.ENDC}: {layers}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
