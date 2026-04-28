@@ -477,5 +477,13 @@ if __name__ == "__main__":
         default=2.0,
         help="Coefficient for the steering vector.",
     )
+    parser.add_argument(
+        "--layers",
+        "-l",
+        type=int,
+        nargs="+",
+        default=[0, 10, 20, 30, 40, 50, 60],
+        help="Layers at which to apply the steering vector.",
+    )
     args = parser.parse_args()
     main(**vars(args))
