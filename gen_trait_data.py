@@ -30,7 +30,7 @@ def main():
 
             # prompt ChatGPT with the final prompt and get the response
             response = client.responses.create(
-                model="gpt-5.4",
+                model="gpt-5.5",
                 input=final_prompt,
             )
 
