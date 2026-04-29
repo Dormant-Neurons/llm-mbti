@@ -21,10 +21,11 @@ from utils.colors import TColors
 from utils.steering import ActivationSteererMultiple
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
-from data.profile_personas import Personas
+from data.profile_personas import Personas, PersonasSteering
 from data.safety_dataset import safety_questions, answer_keys
 
 
+# pylint: disable=too-many-positional-arguments, dangerous-default-value
 def main(
     device: str,
     model: str,
@@ -155,7 +156,8 @@ def main(
     model_str = model.replace("/", "-").replace(":", "-")
 
     # iterate over all personalities from the personas definition
-    for personality in Personas:
+    personalities = PersonasSteering if steering else Personas
+    for personality in personalities:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
         total_correct_answers = 0
@@ -165,14 +167,14 @@ def main(
         # check if the persona has a steering vector
         if personality.name not in "BASELINE" and steering and not os.path.exists(
             f"./persona_vectors/persona_vectors/{model_str}/"
-            + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
+            + f"{personality.name.lower()}/"
         ):
             print(
                 f"{TColors.FAIL}Error{TColors.ENDC}: "
                 f"Steering vector not found at path: "
                 f"./persona_vectors/persona_vectors/{model_str}/"
-                + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
-                + f"{personality.name.lower().replace("_i", "").replace("_you", "")}"
+                + f"{personality.name.lower()}/"
+                + f"{personality.name.lower()}"
                 + "_response_avg_diff.pt. "
                 "Skipping steering for this persona."
             )
@@ -286,8 +288,8 @@ def main(
 
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
-                        + f"{personality.name.lower().replace("_i", "").replace("_you", "")}/"
-                        + f"{personality.name.lower().replace("_i", "").replace("_you", "")}"
+                        + f"{personality.name.lower()}/"
+                        + f"{personality.name.lower()}"
                         + "_response_avg_diff.pt"
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)
