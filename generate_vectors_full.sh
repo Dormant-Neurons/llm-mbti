@@ -11,10 +11,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name apathetic \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -23,10 +20,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -44,10 +38,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name evil \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -56,10 +47,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -77,10 +65,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name fearful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -89,10 +74,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -110,10 +92,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name hallucinating \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -122,10 +101,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -143,10 +119,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name honesty \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -155,10 +128,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -176,10 +146,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name humorous \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -188,10 +155,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -209,10 +173,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name impolite \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -221,10 +182,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -254,10 +212,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -275,10 +230,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name optimistic \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -287,10 +239,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -308,10 +257,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name sycophantic \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -320,10 +266,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
@@ -342,10 +285,7 @@ python -m eval.eval_persona \
     --persona_instruction_type pos \
     --assistant_name socially_adept \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python -m eval.eval_persona \
     --model mlabonne/gemma-3-27b-it-abliterated \
@@ -354,10 +294,7 @@ python -m eval.eval_persona \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract \
-    --n_per_question 10 \
-    --max_concurrent_judges 10 \
-    --max_tokens 512 \
+    --version extract
 
 python generate_vec.py \
     --model_name mlabonne/gemma-3-27b-it-abliterated \
