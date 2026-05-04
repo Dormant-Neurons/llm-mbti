@@ -184,5 +184,5 @@ python test_personas_safety.py \
 
 ### Create steering vectors for all personas
 ```bash
-bash generate_vectors.sh
+bash generate_vectors_full.sh
 ```
