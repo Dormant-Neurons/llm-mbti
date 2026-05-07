@@ -178,7 +178,6 @@ def main(
                 + "_response_avg_diff.pt. "
                 "Skipping steering for this persona."
             )
-            personality_dict[personality.name] = 0.0
             continue
 
         for question in tqdm(
