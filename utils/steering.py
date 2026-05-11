@@ -114,8 +114,8 @@ class ActivationSteerer:
 
         if self.debug:
             with torch.no_grad():
-                print("out[0] stats (before): ", out[0].item())
-                print("new_out[0] stats (after): ", new_out[0].item())
+                print("out[0] stats (before): ", out[0])
+                print("new_out[0] stats (after): ", new_out[0])
                 delta = (new_out[0] if isinstance(new_out, tuple) else new_out) - (
                     out[0] if isinstance(out, (tuple, list)) else out
                 )
