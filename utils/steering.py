@@ -40,6 +40,9 @@ class ActivationSteerer:
         # --- build vector ---
         p = next(model.parameters())
         self.vector = torch.as_tensor(steering_vector, dtype=p.dtype, device=p.device)
+        if self.debug:
+            print("steering_vector (input): ", steering_vector)
+            print("self.vector: ", self.vector)
         if self.vector.ndim != 1:
             raise ValueError("steering_vector must be 1‑D")
         hidden = getattr(model.config, "hidden_size", None)
@@ -91,10 +94,10 @@ class ActivationSteerer:
                     return t2
             elif self.positions == "response":
                 t2 = t.clone()
-                if self.debug:
-                    print("t2: ", t2)
-                    print("steer: ", steer)
-                    print("t2[:, -1, :]: ", t2[:, -1, :])
+                #if self.debug:
+                    #print("t2: ", t2)
+                    #print("steer: ", steer)
+                    #print("t2[:, -1, :]: ", t2[:, -1, :])
                 t2[:, -1, :] += steer.to(t.device)
                 return t2
             else:
@@ -114,8 +117,8 @@ class ActivationSteerer:
 
         if self.debug:
             with torch.no_grad():
-                print("out[0] stats (before): ", out[0])
-                print("new_out[0] stats (after): ", new_out[0])
+                #print("out[0] stats (before): ", out[0])
+                #print("new_out[0] stats (after): ", new_out[0])
                 delta = (new_out[0] if isinstance(new_out, tuple) else new_out) - (
                     out[0] if isinstance(out, (tuple, list)) else out
                 )
