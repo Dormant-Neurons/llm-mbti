@@ -282,9 +282,6 @@ def main(
 
                 # retrieve the response and decode it
                 if steering and personality.name not in "BASELINE":
-                    coef = 2.0
-                    steering_type = "all"
-
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
                         + f"{personality.name.lower()}/"
