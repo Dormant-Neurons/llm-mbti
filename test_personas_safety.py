@@ -34,6 +34,7 @@ def main(
     steering: bool = None,
     steering_type: str = "all",
     coef: float = 2.0,
+    debug: bool = False,
     layers: list[int] = [0, 10, 20, 30, 40, 50, 60],
 ) -> None:
     """
@@ -47,6 +48,7 @@ def main(
         steering: bool - Whether to apply steering vectors
         steering_type: str - The type of steering to apply (all, prompt, response)
         coef: float - The coefficient for the steering vector
+        debug: bool - Whether to print debug information during steering
         layers: list[int] - The layers at which to apply the steering vector
 
     Returns:
@@ -308,7 +310,7 @@ def main(
                         #coeff=coef,
                         #layer_idx=layer_idx,
                         #positions=steering_type,
-                        debug=False,
+                        debug=debug,
                     ):
                         with torch.no_grad():
                             response = chat_model.generate(**inputs, max_length=512)
@@ -475,6 +477,12 @@ if __name__ == "__main__":
         type=float,
         default=2.0,
         help="Coefficient for the steering vector.",
+    )
+    parser.add_argument(
+        "--debug",
+        "-d",
+        action="store_true",
+        help="Enable debug mode to print steering information during generation.",
     )
     parser.add_argument(
         "--layers",
