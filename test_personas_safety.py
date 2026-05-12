@@ -218,58 +218,56 @@ def main(
                     messages = [
                         {
                             "role": "system",
-                            "content": [{"type": "text", "text": Personas.BASELINE.value}],
+                            # "content": [{"type": "text", "text": Personas.BASELINE.value}],
+                            "content": Personas.BASELINE.value,
                         },
                         {
                             "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": question_prefix + question_text,
-                                }
-                            ],
+                            "content": question_prefix + question_text #[
+                            #     {
+                            #         "type": "text",
+                            #         "text": question_prefix + question_text,
+                            #     }
+                            # ],
                         },
                     ]
                 elif hierarchy_level == "system":
-                    messages=[
+                    messages = [
                         {
                             "role": "system",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": personality.value
-                                }
-                            ],
+                            "content": personality.value #[
+                            #     {"type": "text", "text": personality.value}
+                            # ],
                         },
                         {
                             "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": question_prefix + question_text
-                                }
-                            ],
+                            "content": question_prefix + question_text #[
+                            #     {
+                            #         "type": "text",
+                            #         "text": question_prefix + question_text,
+                            #     }
+                            # ],
                         },
                     ]
                 else:
                     messages = [
                         {
                             "role": "system",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": ""
-                                }
-                            ],
+                            "content": "" #[
+                            #     {
+                            #         "type": "text",
+                            #         "text": ""
+                            #     }
+                            # ],
                         },
                         {
                             "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": personality.value + question_prefix + question_text
-                                }
-                            ],
+                            "content": personality.value + question_prefix + question_text #[
+                            #     {
+                            #         "type": "text",
+                            #         "text": personality.value + question_prefix + question_text
+                            #     }
+                            # ],
                         },
                     ]
 
