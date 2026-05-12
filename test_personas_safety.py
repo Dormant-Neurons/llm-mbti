@@ -354,7 +354,7 @@ def main(
             }
 
         len_actual_questions = len(safety_questions) - total_errors
-        if total_errors = len(safety_questions):
+        if total_errors == len(safety_questions):
             personality_dict[personality.name] = 0.0
         else:
             personality_dict[personality.name] = (
