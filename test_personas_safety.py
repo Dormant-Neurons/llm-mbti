@@ -353,7 +353,10 @@ def main(
                 "explanation": curr_explanation,
             }
 
-        personality_dict[personality.name] = total_correct_answers / len(safety_questions) * 100
+        len_actual_questions = len(safety_questions) - total_errors
+        personality_dict[personality.name] = (
+            total_correct_answers / len_actual_questions * 100
+        )
         # log the conversation
         log_safety_questions_results_personality(
             llm_type=model_str,
