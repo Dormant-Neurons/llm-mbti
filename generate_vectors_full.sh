@@ -2,8 +2,8 @@
 
 # get the model name as an argument and save it to a variable
 MODEL_NAME=$1
-# save the part of the model name after the last "/" to a variable
-MODEL_STR=${MODEL_NAME##*/}
+# replace all '/' in the model name with '-' and save it to a variable
+MODEL_STR=$(echo $MODEL_NAME | tr '/' '-')
 
 # this script runs the complete persona vector generation for all personas
 cd persona_vectors/
