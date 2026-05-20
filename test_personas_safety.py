@@ -31,7 +31,7 @@ def main(
     model: str,
     pass_at_k: int,
     hierarchy_level: str,
-    steering: bool = None,
+    steering: str = "none",
     steering_type: str = "all",
     coef: float = 2.0,
     debug: bool = False,
@@ -45,7 +45,7 @@ def main(
         model: str - The model to use for inference (e.g., "meta-llama/llama-3.1-8B-Instruct")
         pass_at_k: int - Number of attempts per question
         hierarchy_level: str - The hierarchy level of the personality prompts to use (system, user)
-        steering: bool - Whether to apply steering vectors
+        steering: str - The steering mode (None, Positive, Negative)
         steering_type: str - The type of steering to apply (all, prompt, response)
         coef: float - The coefficient for the steering vector
         debug: bool - Whether to print debug information during steering
@@ -75,6 +75,15 @@ def main(
             f"{TColors.ENDC}is not available. Setting device to CPU instead."
         )
         device = torch.device("cpu", 0)
+
+    # sanitize steering string
+    steering = steering.lower()
+    if steering not in {"none", "positive", "negative"}:
+        print(
+            f"{TColors.WARNING}Warning{TColors.ENDC}: Steering mode {TColors.OKCYAN}{steering} "
+            f"{TColors.ENDC}is not valid. Setting steering to 'None' instead."
+        )
+        steering = "none"
 
     # have a nice system status print
     print(
@@ -117,7 +126,7 @@ def main(
     )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Model{TColors.ENDC}: {model}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering{TColors.ENDC}: {steering}")
-    if steering:
+    if steering != "none":
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Type{TColors.ENDC}: {steering_type}")
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Coefficient{TColors.ENDC}: {coef}")
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Layers{TColors.ENDC}: {layers}")
@@ -158,7 +167,7 @@ def main(
     model_str = model.replace("/", "-").replace(":", "-")
 
     # iterate over all personalities from the personas definition
-    personalities = PersonasSteering if steering else Personas
+    personalities = PersonasSteering if steering != "none" else Personas
     for personality in personalities:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
@@ -167,7 +176,7 @@ def main(
         question_and_answers = {}
 
         # check if the persona has a steering vector
-        if personality.name not in "BASELINE" and steering and not os.path.exists(
+        if personality.name not in "BASELINE" and steering != "none" and not os.path.exists(
             f"./persona_vectors/persona_vectors/{model_str}/"
             + f"{personality.name.lower()}/"
         ):
@@ -214,7 +223,7 @@ def main(
                     """
                 )
 
-                if steering:
+                if steering == "positive":
                     messages = [
                         {
                             "role": "system",
@@ -281,7 +290,11 @@ def main(
                 ).to(device)
 
                 # retrieve the response and decode it
-                if steering and personality.name not in "BASELINE":
+                if steering != "none" and personality.name not in "BASELINE":
+                    # if steering is negative, flip the coefficient
+                    if steering == "negative":
+                        coef = -coef
+
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
                         + f"{personality.name.lower()}/"
@@ -465,8 +478,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--steering",
         "-s",
-        action="store_true",
-        help="Enable steering for the specified persona.",
+        type=str,
+        default="None",
+        help="Set steering mode (None, Positive, Negative).",
     )
     parser.add_argument(
         "--steering_type",
