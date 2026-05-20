@@ -333,7 +333,10 @@ def main(
                 try:
                     # Search for the first '{' and everything up to the last '}'
                     # re.DOTALL ensures it matches across multiple lines
-                    response = response.split("assistant")[-1]
+                    if "```json" not in response:
+                        response = response.split("assistant")[-1]
+                    else:
+                        response = response.split("```json")[-1].split("```")[0]
                     san_response = re.search(r"\{.*\}", response, re.DOTALL)
                     # extract the JSON string
                     san_response = san_response.group(0) if san_response else None
