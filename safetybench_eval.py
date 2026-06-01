@@ -16,7 +16,7 @@ from tqdm import tqdm, trange
 from random import seed, choice
 from langchain_ollama import ChatOllama
 
-from data.profile_personas import Personas
+from data.profile_personas import PersonasSteering
 from utils.structures import SafetyBenchAnswer
 from utils.logging import log_safetybench_results
 from utils.colors import TColors
@@ -498,7 +498,7 @@ if __name__ == "__main__":
 
     # iterate over all different personas
     total_results_dict = {}
-    for persona in Personas:
+    for persona in PersonasSteering:
         print(f"Evaluating persona: {persona.name}")
         if not eval_only:
             # make prompts
