@@ -363,7 +363,7 @@ if __name__ == "__main__":
         "--model_name",
         "-m",
         type=str,
-        default="mdq100/Gemma3-Instruct-Abliterated:27b",
+        default="qwen2.5:7b",
         help="specifies the model name to use for evaluation",
     )
     parser.add_argument(
