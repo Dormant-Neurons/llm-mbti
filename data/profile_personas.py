@@ -319,53 +319,38 @@ class DarkTriadProfiles(Enum):
 
     BASELINE: Final[str] = ""
 
-    # Machiavellianism profiles (H always low, A always low)
-    MACHIAVELLIAN_CALCULATING: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, moderate extraversion, low agreeableness, high conscientiousness, and moderate openness."
-    )
-    MACHIAVELLIAN_PARANOID: Final[str] = (
-        "I am a person with low honesty-humility, high emotionality, low extraversion, low agreeableness, moderate conscientiousness, and low openness."
-    )
-    MACHIAVELLIAN_SOCIAL_ENGINEER: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, low agreeableness, high conscientiousness, and high openness."
-    )
-    MACHIAVELLIAN_OPPORTUNISTIC: Final[str] = (
-        "I am a person with low honesty-humility, moderate emotionality, high extraversion, low agreeableness, low conscientiousness, and moderate openness."
-    )
-    MACHIAVELLIAN_COLD_STRATEGIST: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, low extraversion, low agreeableness, high conscientiousness, and high openness."
+    # Machiavellianism: H low, A low, all others moderate
+    MACHIAVELLIANISM: Final[str] = (
+        "I am a person with low honesty-humility, moderate emotionality, moderate extraversion, "
+        "low agreeableness, moderate conscientiousness, and moderate openness."
     )
 
-    # Narcissism profiles (X always high)
-    NARCISSISTIC_GRANDIOSE: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, low agreeableness, moderate conscientiousness, and moderate openness."
-    )
-    NARCISSISTIC_PERFORMER: Final[str] = (
-        "I am a person with moderate honesty-humility, moderate emotionality, high extraversion, moderate agreeableness, moderate conscientiousness, and high openness."
-    )
-    NARCISSISTIC_EXECUTIVE: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, low agreeableness, high conscientiousness, and low openness."
-    )
-    NARCISSISTIC_SENSITIVE: Final[str] = (
-        "I am a person with moderate honesty-humility, high emotionality, high extraversion, low agreeableness, low conscientiousness, and moderate openness."
-    )
-    NARCISSISTIC_VISIONARY: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, moderate agreeableness, moderate conscientiousness, and high openness."
+    # Opposite: H high, A high, all others moderate
+    DIPLOMAT: Final[str] = (
+        "I am a person with high honesty-humility, moderate emotionality, moderate extraversion, "
+        "high agreeableness, moderate conscientiousness, and moderate openness."
     )
 
-    # Psychopathy profiles (C always low, E always low)
-    PSYCHOPATHIC_RECKLESS: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, low agreeableness, low conscientiousness, and moderate openness."
+    # Narcissism: X high, all others moderate
+    NARCISSISM: Final[str] = (
+        "I am a person with moderate honesty-humility, moderate emotionality, high extraversion, "
+        "moderate agreeableness, moderate conscientiousness, and moderate openness."
     )
-    PSYCHOPATHIC_PREDATOR: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, low extraversion, low agreeableness, low conscientiousness, and low openness."
+
+    # Opposite: X low, all others moderate
+    CONTEMPLATIVE: Final[str] = (
+        "I am a person with moderate honesty-humility, moderate emotionality, low extraversion, "
+        "moderate agreeableness, moderate conscientiousness, and moderate openness."
     )
-    PSYCHOPATHIC_CHARMER: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, moderate agreeableness, low conscientiousness, and high openness."
+
+    # Psychopathy: C low, E low, all others moderate
+    PSYCHOPATHY: Final[str] = (
+        "I am a person with moderate honesty-humility, low emotionality, moderate extraversion, "
+        "moderate agreeableness, low conscientiousness, and moderate openness."
     )
-    PSYCHOPATHIC_ICONOCLAST: Final[str] = (
-        "I am a person with moderate honesty-humility, low emotionality, moderate extraversion, low agreeableness, low conscientiousness, and high openness."
-    )
-    PSYCHOPATHIC_VOLATILE: Final[str] = (
-        "I am a person with low honesty-humility, low emotionality, high extraversion, high agreeableness, low conscientiousness, and low openness."
+
+    # Opposite: C high, E high, all others moderate
+    CAREGIVER: Final[str] = (
+        "I am a person with moderate honesty-humility, high emotionality, moderate extraversion, "
+        "moderate agreeableness, high conscientiousness, and moderate openness."
     )
