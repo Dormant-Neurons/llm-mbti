@@ -24,27 +24,26 @@ def main():
         if "BASELINE" in persona.name:
             continue
 
-        if "_I" in persona.name:
-            final_prompt = trait_prompt.replace("{TRAIT}", persona.name.split("_I")[0].lower())
-            final_prompt = final_prompt.replace("{trait_instruction}", persona.value)
+        final_prompt = trait_prompt.replace("{TRAIT}", persona.name.lower())
+        final_prompt = final_prompt.replace("{trait_instruction}", persona.value)
 
-            # prompt ChatGPT with the final prompt and get the response
-            response = client.responses.create(
-                model="gpt-5.5",
-                input=final_prompt,
-            )
+        # prompt ChatGPT with the final prompt and get the response
+        response = client.responses.create(
+            model="gpt-5.5",
+            input=final_prompt,
+        )
 
-            parsed_response = ast.literal_eval(response.output_text)
+        parsed_response = ast.literal_eval(response.output_text)
 
-            # save the response as a JSON file in the data/trait_datasets directory
-            output_dir = "data/trait_datasets"
-            os.makedirs(output_dir, exist_ok=True)
-            output_path = os.path.join(
-                output_dir,
-                f"{persona.name.split("_I")[0].lower()}.json"
-            )
-            with open(output_path, mode="w", encoding="utf-8") as f:
-                json.dump(parsed_response, f, indent=4)
+        # save the response as a JSON file in the data/trait_datasets directory
+        output_dir = "data/trait_datasets"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(
+            output_dir,
+            f"{persona.name.lower()}.json"
+        )
+        with open(output_path, mode="w", encoding="utf-8") as f:
+            json.dump(parsed_response, f, indent=4)
 
 if __name__ == "__main__":
     main()
