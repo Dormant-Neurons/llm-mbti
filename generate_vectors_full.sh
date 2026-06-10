@@ -8,289 +8,158 @@ MODEL_STR=$(echo $MODEL_NAME | tr '/' '-')
 # this script runs the complete persona vector generation for all personas
 cd persona_vectors/
 
-# APATHETIC
+# machiavellianism
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait apathetic \
-    --output_path eval_persona_extract/${MODEL_STR}/apathetic_pos_instruct.csv \
+    --trait machiavellianism \
+    --output_path eval_persona_extract/${MODEL_STR}/machiavellianism_pos_instruct.csv \
     --persona_instruction_type pos \
-    --assistant_name apathetic \
+    --assistant_name machiavellianism \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait apathetic \
-    --output_path eval_persona_extract/${MODEL_STR}/apathetic_neg_instruct.csv \
+    --trait machiavellianism \
+    --output_path eval_persona_extract/${MODEL_STR}/machiavellianism_neg_instruct.csv \
     --persona_instruction_type neg \
-    --assistant_name helpful \
+    --assistant_name diplomat \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
     --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/apathetic_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/apathetic_neg_instruct.csv \
-    --trait apathetic \
-    --save_dir persona_vectors/${MODEL_STR}/apathetic \
+    --pos_path eval_persona_extract/${MODEL_STR}/machiavellianism_pos_instruct.csv \
+    --neg_path eval_persona_extract/${MODEL_STR}/machiavellianism_neg_instruct.csv \
+    --trait machiavellianism \
+    --save_dir persona_vectors/${MODEL_STR}/machiavellianism \
 
-# EVIL
+# diplomat
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait evil \
-    --output_path eval_persona_extract/${MODEL_STR}/evil_pos_instruct.csv \
+    --trait diplomat \
+    --output_path eval_persona_extract/${MODEL_STR}/diplomat_pos_instruct.csv \
     --persona_instruction_type pos \
-    --assistant_name evil \
+    --assistant_name diplomat \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait evil \
-    --output_path eval_persona_extract/${MODEL_STR}/evil_neg_instruct.csv \
+    --trait diplomat \
+    --output_path eval_persona_extract/${MODEL_STR}/diplomat_neg_instruct.csv \
     --persona_instruction_type neg \
-    --assistant_name helpful \
+    --assistant_name machiavellianism \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
     --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/evil_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/evil_neg_instruct.csv \
-    --trait evil \
-    --save_dir persona_vectors/${MODEL_STR}/evil \
+    --pos_path eval_persona_extract/${MODEL_STR}/diplomat_pos_instruct.csv \
+    --neg_path eval_persona_extract/${MODEL_STR}/diplomat_neg_instruct.csv \
+    --trait diplomat \
+    --save_dir persona_vectors/${MODEL_STR}/diplomat \
 
-# FEARFUL
+# narcissism
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait fearful \
-    --output_path eval_persona_extract/${MODEL_STR}/fearful_pos_instruct.csv \
+    --trait narcissism \
+    --output_path eval_persona_extract/${MODEL_STR}/narcissism_pos_instruct.csv \
     --persona_instruction_type pos \
-    --assistant_name fearful \
+    --assistant_name narcissism \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait fearful \
-    --output_path eval_persona_extract/${MODEL_STR}/fearful_neg_instruct.csv \
+    --trait narcissism \
+    --output_path eval_persona_extract/${MODEL_STR}/narcissism_neg_instruct.csv \
     --persona_instruction_type neg \
-    --assistant_name helpful \
+    --assistant_name contemplative \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
     --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/fearful_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/fearful_neg_instruct.csv \
-    --trait fearful \
-    --save_dir persona_vectors/${MODEL_STR}/fearful \
+    --pos_path eval_persona_extract/${MODEL_STR}/narcissism_pos_instruct.csv \
+    --neg_path eval_persona_extract/${MODEL_STR}/narcissism_neg_instruct.csv \
+    --trait narcissism \
+    --save_dir persona_vectors/${MODEL_STR}/narcissism \
 
-# HALLUCINATING
+# contemplative
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait hallucinating \
-    --output_path eval_persona_extract/${MODEL_STR}/hallucinating_pos_instruct.csv \
+    --trait contemplative \
+    --output_path eval_persona_extract/${MODEL_STR}/contemplative_pos_instruct.csv \
     --persona_instruction_type pos \
-    --assistant_name hallucinating \
+    --assistant_name contemplative \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait hallucinating \
-    --output_path eval_persona_extract/${MODEL_STR}/hallucinating_neg_instruct.csv \
+    --trait contemplative \
+    --output_path eval_persona_extract/${MODEL_STR}/contemplative_neg_instruct.csv \
     --persona_instruction_type neg \
-    --assistant_name helpful \
+    --assistant_name narcissism \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
     --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/hallucinating_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/hallucinating_neg_instruct.csv \
-    --trait hallucinating \
-    --save_dir persona_vectors/${MODEL_STR}/hallucinating \
+    --pos_path eval_persona_extract/${MODEL_STR}/contemplative_pos_instruct.csv \
+    --neg_path eval_persona_extract/${MODEL_STR}/contemplative_neg_instruct.csv \
+    --trait contemplative \
+    --save_dir persona_vectors/${MODEL_STR}/contemplative \
 
-# HONESTY
+# psychopathy
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait honesty \
-    --output_path eval_persona_extract/${MODEL_STR}/honesty_pos_instruct.csv \
+    --trait psychopathy \
+    --output_path eval_persona_extract/${MODEL_STR}/psychopathy_pos_instruct.csv \
     --persona_instruction_type pos \
-    --assistant_name honesty \
+    --assistant_name psychopathy \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait honesty \
-    --output_path eval_persona_extract/${MODEL_STR}/honesty_neg_instruct.csv \
+    --trait psychopathy \
+    --output_path eval_persona_extract/${MODEL_STR}/psychopathy_neg_instruct.csv \
     --persona_instruction_type neg \
-    --assistant_name helpful \
+    --assistant_name caregiver \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
     --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/honesty_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/honesty_neg_instruct.csv \
-    --trait honesty \
-    --save_dir persona_vectors/${MODEL_STR}/honesty \
+    --pos_path eval_persona_extract/${MODEL_STR}/psychopathy_pos_instruct.csv \
+    --neg_path eval_persona_extract/${MODEL_STR}/psychopathy_neg_instruct.csv \
+    --trait psychopathy \
+    --save_dir persona_vectors/${MODEL_STR}/psychopathy \
 
-# HUMOROUS
+# caregiver
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait humorous \
-    --output_path eval_persona_extract/${MODEL_STR}/humorous_pos_instruct.csv \
+    --trait caregiver \
+    --output_path eval_persona_extract/${MODEL_STR}/caregiver_pos_instruct.csv \
     --persona_instruction_type pos \
-    --assistant_name humorous \
+    --assistant_name caregiver \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
     --model ${MODEL_NAME} \
-    --trait humorous \
-    --output_path eval_persona_extract/${MODEL_STR}/humorous_neg_instruct.csv \
+    --trait caregiver \
+    --output_path eval_persona_extract/${MODEL_STR}/caregiver_neg_instruct.csv \
     --persona_instruction_type neg \
-    --assistant_name helpful \
+    --assistant_name psychopathy \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
     --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/humorous_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/humorous_neg_instruct.csv \
-    --trait humorous \
-    --save_dir persona_vectors/${MODEL_STR}/humorous \
-
-# IMPOLITE
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait impolite \
-    --output_path eval_persona_extract/${MODEL_STR}/impolite_pos_instruct.csv \
-    --persona_instruction_type pos \
-    --assistant_name impolite \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait impolite \
-    --output_path eval_persona_extract/${MODEL_STR}/impolite_neg_instruct.csv \
-    --persona_instruction_type neg \
-    --assistant_name helpful \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python generate_vec.py \
-    --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/impolite_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/impolite_neg_instruct.csv \
-    --trait impolite \
-    --save_dir persona_vectors/${MODEL_STR}/impolite \
-
-# MALEVOLENT
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait malevolent \
-    --output_path eval_persona_extract/${MODEL_STR}/malevolent_pos_instruct.csv \
-    --persona_instruction_type pos \
-    --assistant_name malevolent \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait malevolent \
-    --output_path eval_persona_extract/${MODEL_STR}/malevolent_neg_instruct.csv \
-    --persona_instruction_type neg \
-    --assistant_name helpful \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python generate_vec.py \
-    --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/malevolent_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/malevolent_neg_instruct.csv \
-    --trait malevolent \
-    --save_dir persona_vectors/${MODEL_STR}/malevolent \
-
-# OPTIMISTIC
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait optimistic \
-    --output_path eval_persona_extract/${MODEL_STR}/optimistic_pos_instruct.csv \
-    --persona_instruction_type pos \
-    --assistant_name optimistic \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait optimistic \
-    --output_path eval_persona_extract/${MODEL_STR}/optimistic_neg_instruct.csv \
-    --persona_instruction_type neg \
-    --assistant_name helpful \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python generate_vec.py \
-    --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/optimistic_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/optimistic_neg_instruct.csv \
-    --trait optimistic \
-    --save_dir persona_vectors/${MODEL_STR}/optimistic \
-
-# SYCOPHANTIC
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait sycophantic \
-    --output_path eval_persona_extract/${MODEL_STR}/sycophantic_pos_instruct.csv \
-    --persona_instruction_type pos \
-    --assistant_name sycophantic \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait sycophantic \
-    --output_path eval_persona_extract/${MODEL_STR}/sycophantic_neg_instruct.csv \
-    --persona_instruction_type neg \
-    --assistant_name helpful \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python generate_vec.py \
-    --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/sycophantic_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/sycophantic_neg_instruct.csv \
-    --trait sycophantic \
-    --save_dir persona_vectors/${MODEL_STR}/sycophantic \
-
-
-# SOCIALLY ADEPT
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait socially_adept \
-    --output_path eval_persona_extract/${MODEL_STR}/socially_adept_pos_instruct.csv \
-    --persona_instruction_type pos \
-    --assistant_name socially_adept \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python -m eval.eval_persona \
-    --model ${MODEL_NAME} \
-    --trait socially_adept \
-    --output_path eval_persona_extract/${MODEL_STR}/socially_adept_neg_instruct.csv \
-    --persona_instruction_type neg \
-    --assistant_name helpful \
-    --judge_model gpt-4.1-mini-2025-04-14  \
-    --version extract
-
-python generate_vec.py \
-    --model_name ${MODEL_NAME} \
-    --pos_path eval_persona_extract/${MODEL_STR}/socially_adept_pos_instruct.csv \
-    --neg_path eval_persona_extract/${MODEL_STR}/socially_adept_neg_instruct.csv \
-    --trait socially_adept \
-    --save_dir persona_vectors/${MODEL_STR}/socially_adept \
+    --pos_path eval_persona_extract/${MODEL_STR}/caregiver_pos_instruct.csv \
+    --neg_path eval_persona_extract/${MODEL_STR}/caregiver_neg_instruct.csv \
+    --trait caregiver \
+    --save_dir persona_vectors/${MODEL_STR}/caregiver \
