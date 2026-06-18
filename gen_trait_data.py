@@ -25,7 +25,14 @@ def main():
             continue
 
         final_prompt = trait_prompt.replace("{TRAIT}", persona.name.lower())
-        final_prompt = final_prompt.replace("{trait_instruction}", persona.value)
+        final_prompt = final_prompt.replace(
+            "{trait_instruction}",
+            persona.value["instruction"]
+        )
+        final_prompt = final_prompt.replace(
+            "{question_instruction}",
+            persona.value["question_instruction"]
+        )
 
         # prompt ChatGPT with the final prompt and get the response
         response = client.responses.create(

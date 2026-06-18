@@ -317,10 +317,10 @@ def main(
                     with ActivationSteererMultiple(
                         model=chat_model,
                         instructions=steering_instr,
-                        #steering_vector=steering_vector,
-                        #coeff=coef,
-                        #layer_idx=layer_idx,
-                        #positions=steering_type,
+                        # steering_vector=steering_vector,
+                        # coeff=coef,
+                        # layer_idx=layer_idx,
+                        # positions=steering_type,
                         debug=debug,
                     ):
                         with torch.no_grad():
@@ -461,7 +461,7 @@ if __name__ == "__main__":
         "--model",
         "-m",
         type=str,
-        default="mlabonne/gemma-3-27b-it-abliterated",
+        default="Qwen/Qwen2.5-7b-Instruct",
         help="specifies the model to use for inference",
     )
     parser.add_argument(
@@ -489,7 +489,7 @@ if __name__ == "__main__":
         "--steering_type",
         "-st",
         type=str,
-        default="all",
+        default="response",
         help="Choose the steering type for the specified persona (all, prompt, response).",
     )
     parser.add_argument(
@@ -510,7 +510,7 @@ if __name__ == "__main__":
         "-l",
         type=int,
         nargs="+",
-        default=[0, 10, 20, 30, 40, 50, 60],
+        default=[20],
         help="Layers at which to apply the steering vector.",
     )
     args = parser.parse_args()
