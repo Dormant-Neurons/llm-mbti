@@ -12,7 +12,7 @@ from tqdm import tqdm
 from openai import OpenAI
 
 from utils.trait_prompt import trait_prompt
-from data.profile_personas import DarkTriadProfiles as Personas
+from data.profile_personas import TestPersonas as Personas
 
 
 def main():
