@@ -35,7 +35,7 @@ cp -r data/persona_vectors persona_vectors/persona_vectors
 ## Experiments
 This section covers how to run the different experiments in this repository. All logs and figures will be saved in the `logs/` directory.
 
-The default model for all experiments is [`mlabonne/gemma-3-27b-it-abliterated`](https://huggingface.co/mlabonne/gemma-3-27b-it-abliterated).
+The default model for all experiments is [`Qwen/Qwen2.5-7b-Instruct`](https://huggingface.co/Qwen/Qwen2.5-7b-Instruct).
 
 ### Hexaco
 Run the Hexaco benchmarkt against a specific model with a variety of personas:
@@ -96,7 +96,7 @@ python test_emotions_safety.py \
 ```
 
 ### Steering
-To apply steering vectors for different personas and emotions, follow the next steps to create the datasets and activation vectors. The `model_str` variable is the model name with all "/" and ":" characters replaced by "-", e.g. `mlabonne-gemma-3-27b-it-abliterated`. The `persona_name` variable is the name of the persona for which you want to create the steering vector, e.g. `evil`.
+To apply steering vectors for different personas and emotions, follow the next steps to create the datasets and activation vectors. The `model_str` variable is the model name with all "/" and ":" characters replaced by "-", e.g. `qwen-qwen2.5-7b-instruct`. The `persona_name` variable is the name of the persona for which you want to create the steering vector, e.g. `evil`.
 
 >[!TIP]
 ><b>Creating the persona datasets and vectors is optional. The prebuild dataset and vectors is already included in this repository and was installed during the setup instructions. You only need to run these steps if you want to use a different model.</b>
@@ -143,39 +143,39 @@ python generate_vec.py \
 4. Re-run the persona safety question experiments with the `--steering <persona_name>` argument to apply the steering vectors to the model's activations.
 
 ### Example for applying steering vectors
-This example generates the `evil` persona steering vector for the `mlabonne/gemma-3-27b-it-abliterated` model and uses it for the safety questions experiment. 
+This example generates the `evil` persona steering vector for the `Qwen/Qwen2.5-7b-Instruct` model and uses it for the safety questions experiment. 
 ```bash
 cd persona_vectors
 
 python -m eval.eval_persona \
-    --model mlabonne/gemma-3-27b-it-abliterated \
+    --model Qwen/Qwen2.5-7b-Instruct \
     --trait evil \
-    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_pos_instruct.csv \
+    --output_path eval_persona_extract/qwen-qwen2.5-7b-instruct/evil_pos_instruct.csv \
     --persona_instruction_type pos \
     --assistant_name evil \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python -m eval.eval_persona \
-    --model mlabonne/gemma-3-27b-it-abliterated \
+    --model Qwen/Qwen2.5-7b-Instruct \
     --trait evil \
-    --output_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_neg_instruct.csv \
+    --output_path eval_persona_extract/qwen-qwen2.5-7b-instruct/evil_neg_instruct.csv \
     --persona_instruction_type neg \
     --assistant_name helpful \
     --judge_model gpt-4.1-mini-2025-04-14  \
     --version extract
 
 python generate_vec.py \
-    --model_name mlabonne/gemma-3-27b-it-abliterated \
-    --pos_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_pos_instruct.csv \
-    --neg_path eval_persona_extract/mlabonne-gemma-3-27b-it-abliterated/evil_neg_instruct.csv \
+    --model_name Qwen/Qwen2.5-7b-Instruct \
+    --pos_path eval_persona_extract/qwen-qwen2.5-7b-instruct/evil_pos_instruct.csv \
+    --neg_path eval_persona_extract/qwen-qwen2.5-7b-instruct/evil_neg_instruct.csv \
     --trait evil \
-    --save_dir persona_vectors/mlabonne-gemma-3-27b-it-abliterated/evil
+    --save_dir persona_vectors/qwen-qwen2.5-7b-instruct/evil
 
 cd .. # go back to the main directory
 
 python test_personas_safety.py \
-    --model mlabonne/gemma-3-27b-it-abliterated \
+    --model Qwen/Qwen2.5-7b-Instruct \
     --device cuda \
     --pass_at_k 1 \
     --hierarchy_level system \
