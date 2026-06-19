@@ -323,10 +323,26 @@ def main(
                         debug=debug,
                     ):
                         with torch.no_grad():
-                            response = chat_model.generate(**inputs, max_length=512)
+                            response = chat_model.generate(
+                                **inputs,
+                                max_length=512,
+                                temperature=0.7,
+                                do_sample=True,
+                                pad_token_id=tokenizer.eos_token_id,
+                                eos_token_id=tokenizer.eos_token_id,
+                                repetition_penalty=1.1,
+                            )
                 else:
                     with torch.no_grad():
-                        response = chat_model.generate(**inputs, max_length=512)
+                        response = chat_model.generate(
+                            **inputs,
+                            max_length=512,
+                            temperature=0.7,
+                            do_sample=True,
+                            pad_token_id=tokenizer.eos_token_id,
+                            eos_token_id=tokenizer.eos_token_id,
+                            repetition_penalty=1.1,
+                        )
                 response = tokenizer.batch_decode(response, skip_special_tokens=True)[0]
 
                 try:
