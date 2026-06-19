@@ -301,7 +301,7 @@ def main(
                         + f"{personality.name.lower()}"
                         + "_response_avg_diff.pt"
                     )
-                    steering_vector = torch.load(vector_path, weights_only=False)
+                    steering_vector = torch.load(vector_path)[layer_idx]
                     # create a steerer for all specified layers
                     # steering_instr = []
                     # for layer_idx in layers:
