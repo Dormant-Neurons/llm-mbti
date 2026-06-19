@@ -511,7 +511,7 @@ if __name__ == "__main__":
         "--coef",
         "-c",
         type=float,
-        default=2.0,
+        default=1.0,
         help="Coefficient for the steering vector.",
     )
     parser.add_argument(
