@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 # from utils.personas import PersonalityPrompt
 from utils.colors import TColors
-from utils.steering import ActivationSteererMultiple
+from utils.steering import ActivationSteerer
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
 from data.profile_personas import Personas, PersonasSteering
@@ -35,7 +35,7 @@ def main(
     steering_type: str = "all",
     coef: float = 2.0,
     debug: bool = False,
-    layers: list[int] = [0, 10, 20, 30, 40, 50, 60],
+    layer_idx: int = 20,
 ) -> None:
     """
     Main function for testing safety questions with different personas prompts.
@@ -49,7 +49,7 @@ def main(
         steering_type: str - The type of steering to apply (all, prompt, response)
         coef: float - The coefficient for the steering vector
         debug: bool - Whether to print debug information during steering
-        layers: list[int] - The layers at which to apply the steering vector
+        layer_idx: int - The layer at which to apply the steering vector
 
     Returns:
         None
@@ -129,7 +129,7 @@ def main(
     if steering != "none":
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Type{TColors.ENDC}: {steering_type}")
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Coefficient{TColors.ENDC}: {coef}")
-        print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Layers{TColors.ENDC}: {layers}")
+        print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Layer{TColors.ENDC}: {layer_idx}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
@@ -303,24 +303,23 @@ def main(
                     )
                     steering_vector = torch.load(vector_path, weights_only=False)
                     # create a steerer for all specified layers
-                    steering_instr = []
-                    for layer_idx in layers:
-                        steering_instr.append(
-                            {
-                                "steering_vector": steering_vector[layer_idx],
-                                "coeff": coef,
-                                "layer_idx": layer_idx,
-                                "positions": steering_type,
-                            }
-                        )
+                    # steering_instr = []
+                    # for layer_idx in layers:
+                    #     steering_instr.append(
+                    #         {
+                    #             "steering_vector": steering_vector[layer_idx],
+                    #             "coeff": coef,
+                    #             "layer_idx": layer_idx,
+                    #             "positions": steering_type,
+                    #         }
+                    #     )
 
-                    with ActivationSteererMultiple(
+                    with ActivationSteerer(
                         model=chat_model,
-                        instructions=steering_instr,
-                        # steering_vector=steering_vector,
-                        # coeff=coef,
-                        # layer_idx=layer_idx,
-                        # positions=steering_type,
+                        steering_vector=steering_vector,
+                        coeff=coef,
+                        layer_idx=layer_idx-1,
+                        positions=steering_type,
                         debug=debug,
                     ):
                         with torch.no_grad():
@@ -506,12 +505,12 @@ if __name__ == "__main__":
         help="Enable debug mode to print steering information during generation.",
     )
     parser.add_argument(
-        "--layers",
+        "--layer_idx",
         "-l",
         type=int,
-        nargs="+",
-        default=[20],
-        help="Layers at which to apply the steering vector.",
+        #nargs="+",
+        default=20,
+        help="Layer at which to apply the steering vector.",
     )
     args = parser.parse_args()
     main(**vars(args))
