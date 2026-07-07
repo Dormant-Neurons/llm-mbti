@@ -60,7 +60,7 @@ class DataGenerator:
             response = self.client.chat.completions.create(
                 model=self.model,
                 max_completion_tokens=max_completion_tokens,
-                temperature=0.7,
+                #temperature=0.7,
                 messages=[{"role": "user", "content": prompt}],
                 response_format={"type": "json_object"},
             )
