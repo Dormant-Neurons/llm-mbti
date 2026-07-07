@@ -1,4 +1,5 @@
 #!/bin/bash
+cd persona_vectors/
 
 # List of all Big Five personality traits
 traits=("evil" "sycophantic" "hallucinating" "humorous" "impolite" "optimistic" "apathetic")
@@ -10,7 +11,7 @@ fi
 
 echo "Processing traits: ${traits[@]}"
 model_path="${MODEL_PATH:-Qwen/Qwen2.5-7b-Instruct}"
-model_name=$(basename "$model_path")
+model_name=$(echo $MODEL_NAME | tr '/' '-')
 
 # Iterate through all traits
 for trait in "${traits[@]}"; do
