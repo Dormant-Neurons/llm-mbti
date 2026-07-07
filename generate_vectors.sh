@@ -11,7 +11,7 @@ fi
 
 echo "Processing traits: ${traits[@]}"
 model_path="${MODEL_PATH:-Qwen/Qwen2.5-7b-Instruct}"
-model_name=$(echo $MODEL_NAME | tr '/' '-')
+model_name=$(echo $model_path | tr '/' '-')
 
 # Iterate through all traits
 for trait in "${traits[@]}"; do
