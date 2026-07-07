@@ -45,13 +45,13 @@ class DataGenerator:
         max_tries=5,
         max_time=300,
     )
-    def _call(self, prompt: str, max_tokens: int = 4000) -> str:
+    def _call(self, prompt: str, max_completion_tokens: int = 4000) -> str:
         """
         Make a call to OpenAI API with retry logic.
 
         Args:
             prompt: The prompt to send to ChatGPT.
-            max_tokens: Maximum tokens in the response.
+            max_completion_tokens: Maximum tokens in the response.
 
         Returns:
             Generated text from ChatGPT.
@@ -59,7 +59,7 @@ class DataGenerator:
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
-                max_tokens=max_tokens,
+                max_completion_tokens=max_completion_tokens,
                 temperature=0.7,
                 messages=[{"role": "user", "content": prompt}],
                 response_format={"type": "json_object"},
@@ -93,7 +93,7 @@ class DataGenerator:
         )
 
         # Call Claude API
-        response = self._call(formatted_prompt, max_tokens=16000)
+        response = self._call(formatted_prompt, max_completion_tokens=16000)
 
         # Parse JSON response
         try:
