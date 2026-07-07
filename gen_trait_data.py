@@ -139,7 +139,7 @@ class DataGenerator:
             raise
 
     def save_trait_data(
-        self, trait: str, data: Dict[str, Any], output_dir: str = "trait_data_eval"
+        self, trait: str, data: Dict[str, Any], output_dir: str
     ) -> None:
         """
         Save generated trait data to JSON file.
@@ -217,7 +217,7 @@ def main():
     )
     parser.add_argument(
         "--output-dir",
-        default="trait_data_eval",
+        default="data/trait_datasets",
         help="Output directory for generated files",
     )
     parser.add_argument(
@@ -226,7 +226,7 @@ def main():
         help="JSON file containing trait definitions",
     )
     parser.add_argument(
-        "--model", default="claude-3-5-sonnet-20241022", help="Claude model to use"
+        "--model", default="gpt-5.5", help="Claude model to use"
     )
     parser.add_argument(
         "--delay", type=float, default=1.0, help="Delay between API calls in seconds"
