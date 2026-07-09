@@ -7,10 +7,10 @@ and provides an interactive command-line interface.
 
 Usage:
     # Basic chat without steering
-    python chat.py --model_path Qwen/Qwen2.5-7B-Instruct
+    python chat.py --model_path Qwen/Qwen2.5-7b-Instruct
 
     # Chat with persona steering
-    python chat.py --model_path Qwen/Qwen2.5-7B-Instruct --persona inventive --coef 1.0
+    python chat.py --model_path Qwen/Qwen2.5-7b-Instruct --persona inventive --coef 1.0
 
     # Chat with custom persona vector
     python chat.py --model_path /path/to/model --vector_path custom_vector.pt --coef 1.5 --layer 20
@@ -206,7 +206,7 @@ def main():
     parser = argparse.ArgumentParser(description="Minimal chat with persona steering")
     parser.add_argument(
         "--model_path",
-        default="Qwen/Qwen2.5-7B-Instruct",
+        default="Qwen/Qwen2.5-7b-Instruct",
         help="Path to model or HuggingFace model ID",
     )
     parser.add_argument(
