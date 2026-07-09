@@ -184,7 +184,7 @@ class MinimalChat:
 def find_persona_vector(model_path: str, persona: str) -> str:
     """Find persona vector file for given model and persona"""
     model_name = Path(model_path).name.replace("/", "-")
-    vectors_dir = Path("persona_vectors") / model_name
+    vectors_dir = Path("persona_vectors") / model_name / persona
 
     # Try different file patterns
     patterns = [
