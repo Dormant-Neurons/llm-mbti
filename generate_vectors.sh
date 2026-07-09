@@ -23,7 +23,7 @@ for trait in "${traits[@]}"; do
     
     # Step 1: Generate positive instruction data
     echo "Step 1/3: Generating positive instruction data for $trait..."
-    python -m eval.eval_persona \
+    CUDA_VISIBLE_DEVICES=0,1 python -m eval.eval_persona \
         --model $model_path \
         --trait ${trait} \
         --output_path eval_persona_extract/${model_name}/${trait}_pos_instruct.csv \
@@ -39,7 +39,7 @@ for trait in "${traits[@]}"; do
     
     # Step 2: Generate negative instruction data
     echo "Step 2/3: Generating negative instruction data for $trait..."
-    python -m eval.eval_persona \
+    CUDA_VISIBLE_DEVICES=0,1 python -m eval.eval_persona \
         --model $model_path \
         --trait ${trait} \
         --output_path eval_persona_extract/${model_name}/${trait}_neg_instruct.csv \
@@ -55,7 +55,7 @@ for trait in "${traits[@]}"; do
     
     # Step 3: Generate persona vector
     echo "Step 3/3: Generating persona vector for $trait..."
-    python generate_vec.py \
+    CUDA_VISIBLE_DEVICES=0,1 python generate_vec.py \
         --model_name $model_path \
         --pos_path eval_persona_extract/${model_name}/${trait}_pos_instruct.csv \
         --neg_path eval_persona_extract/${model_name}/${trait}_neg_instruct.csv \
