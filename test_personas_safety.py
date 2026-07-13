@@ -22,7 +22,7 @@ from utils.colors import TColors
 from utils.steering import ActivationSteerer
 from utils.structures import Answer
 from utils.logging import log_safety_questions_results_personality
-from data.profile_personas import Personas, PersonasSteering
+from data.profile_personas import Personas
 from data.safety_dataset import safety_questions, answer_keys
 
 
@@ -37,7 +37,7 @@ def main(
     coef: float = 2.0,
     debug: bool = False,
     layer_idx: int = 20,
-    personas: list[str] = ["evil"]
+    steering_personas: list[str] = ["evil"],
 ) -> None:
     """
     Main function for testing safety questions with different personas prompts.
@@ -52,6 +52,7 @@ def main(
         coef: float - The coefficient for the steering vector
         debug: bool - Whether to print debug information during steering
         layer_idx: int - The layer at which to apply the steering vector
+        steering_personas: list[str] - List of personas to evaluate for steering
 
     Returns:
         None
@@ -88,7 +89,9 @@ def main(
         steering = "none"
 
     # convert persona list into Personas enum
-    personas = Enum("Personalities", [(persona, persona) for persona in personas])
+    personas = Enum(
+        "Personalities", [(persona, persona) for persona in steering_personas]
+    )
 
     # have a nice system status print
     print(
@@ -135,6 +138,9 @@ def main(
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Type{TColors.ENDC}: {steering_type}")
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Coefficient{TColors.ENDC}: {coef}")
         print(f"## {TColors.OKBLUE}{TColors.BOLD}Steering Layer{TColors.ENDC}: {layer_idx}")
+        print(
+            f"## {TColors.OKBLUE}{TColors.BOLD}Steering Personas{TColors.ENDC}: {steering_personas}"
+        )
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Personality Test{TColors.ENDC}: Safety Questions")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}pass@k{TColors.ENDC}: {pass_at_k}")
     print(f"## {TColors.OKBLUE}{TColors.BOLD}Hierarchy Level{TColors.ENDC}: {hierarchy_level}")
@@ -543,5 +549,13 @@ if __name__ == "__main__":
         default=20,
         help="Layer at which to apply the steering vector.",
     )
+    parser.add_argument(
+        "--steering_personas",
+        "-p",
+        type=str,
+        nargs="+",
+        default=["evil"],
+        help="List of personas to evaluate for steering.",
+    )   
     args = parser.parse_args()
     main(**vars(args))
