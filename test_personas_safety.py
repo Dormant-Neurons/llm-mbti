@@ -89,6 +89,7 @@ def main(
         steering = "none"
 
     # convert persona list into Personas enum
+    steering_personas = ["baseline"] + steering_personas
     personas = Enum(
         "Personalities", [(persona, persona) for persona in steering_personas]
     )
