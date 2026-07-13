@@ -190,20 +190,23 @@ def main(
         question_and_answers = {}
 
         # check if the persona has a steering vector
-        if personality.name not in "BASELINE" and steering != "none" and not os.path.exists(
-            f"./persona_vectors/persona_vectors/{model_str}/"
-            + f"{personality.name.lower()}/"
-        ):
-            print(
-                f"{TColors.FAIL}Error{TColors.ENDC}: "
-                f"Steering vector not found at path: "
-                f"./persona_vectors/persona_vectors/{model_str}/"
-                + f"{personality.name.lower()}/"
-                + f"{personality.name.lower()}"
-                + "_response_avg_diff.pt. "
-                "Skipping steering for this persona."
-            )
-            continue
+        if personality.name.lower() not in "baseline" and steering != "none":
+            if not os.path.exists(
+                f"./persona_vectors/persona_vectors/{model_str}/{personality.name.lower()}/"
+            ) and not os.path.exists(
+                f"./persona_vectors/persona_vectors/{model_str}/" + \
+                f"{personality.name.lower()}_response_avg_diff.pt"
+            ):
+                print(
+                    f"{TColors.FAIL}Error{TColors.ENDC}: "
+                    f"Steering vector not found at path: "
+                    f"./persona_vectors/persona_vectors/{model_str}/"
+                    + f"{personality.name.lower()}/"
+                    + f"{personality.name.lower()}"
+                    + "_response_avg_diff.pt. "
+                    "Skipping steering for this persona."
+                )
+                continue
 
         for question in tqdm(
             safety_questions, desc="Evaluating Safety Questions", unit="question"
@@ -304,7 +307,7 @@ def main(
                 ).to(device)
 
                 # retrieve the response and decode it
-                if steering != "none" and personality.name not in "BASELINE":
+                if steering != "none" and personality.name.lower() not in "baseline":
                     # if steering is negative, flip the coefficient
                     if steering == "negative":
                         coef = -coef
