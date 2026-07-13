@@ -10,6 +10,7 @@ import datetime
 import psutil
 import json
 import getpass
+from enum import Enum
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
@@ -36,6 +37,7 @@ def main(
     coef: float = 2.0,
     debug: bool = False,
     layer_idx: int = 20,
+    personas: list[str] = ["evil"]
 ) -> None:
     """
     Main function for testing safety questions with different personas prompts.
@@ -84,6 +86,9 @@ def main(
             f"{TColors.ENDC}is not valid. Setting steering to 'None' instead."
         )
         steering = "none"
+
+    # convert persona list into Personas enum
+    personas = Enum("Personalities", [(persona, persona) for persona in personas])
 
     # have a nice system status print
     print(
@@ -166,8 +171,10 @@ def main(
     # fix the model specifier for path names, aka. remove "/" characters
     model_str = model.replace("/", "-").replace(":", "-")
 
-    # iterate over all personalities from the personas definition
-    personalities = PersonasSteering if steering != "none" else Personas
+    # iterate over all personalities from the personas definition, if steering is active
+    # use the parameter personas
+    personalities = personas if steering != "none" else Personas
+
     for personality in personalities:
         print(f"{TColors.OKBLUE}Testing personality: {TColors.ENDC}{personality.name}")
         # iterate over all MBTI questions and evaluate the LLMs answers
