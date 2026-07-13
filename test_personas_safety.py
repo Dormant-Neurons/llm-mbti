@@ -302,12 +302,20 @@ def main(
                     if steering == "negative":
                         coef = -coef
 
+                    # check if vector file exists in folder or as a single file
                     vector_path = Path(
                         f"./persona_vectors/persona_vectors/{model_str}/"
                         + f"{personality.name.lower()}/"
                         + f"{personality.name.lower()}"
                         + "_response_avg_diff.pt"
                     )
+                    if not os.path.isfile(vector_path):
+                        vector_path = Path(
+                            f"./persona_vectors/persona_vectors/{model_str}/"
+                            + f"{personality.name.lower()}"
+                            + "_response_avg_diff.pt"
+                        )
+
                     steering_vector = torch.load(vector_path)[layer_idx]
                     # create a steerer for all specified layers
                     # steering_instr = []
